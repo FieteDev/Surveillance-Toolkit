@@ -15,8 +15,7 @@ By adhering to the methods and definitions we specify here, you can ensure that 
 Within the NeoIPC project, we want to support you with infection prevention and control (IPC) interventions and strategies in your neonatal intensive care unit, especially if you observe a high prevalence of hospital-acquired infections or multidrug-resistant (MDR) bacteria.
 We are an international team of clinicians and scientists from 13 collaborating partner institutions with a proven record in the areas of neonatal intensive care, neonatal infection, infection prevention and control (IPC), implementation science, microbiology, and surveillance, who collaborate in this project to achieve two overarching goals:
 
-. Develop and implement an innovative approach towards the evaluation of IPC interventions in 
-neonatology via:
+. Develop and implement an innovative approach towards the evaluation of IPC interventions in neonatology via:
 .. Robust assessment of the effectiveness of interventions in a randomised controlled trial (RCT)
 .. Identification of a suitable implementation strategy.
 . Generate widely relevant and globally transferable outputs to improve IPC in neonatal care through:
@@ -192,7 +191,7 @@ For the generation of reference reports, NeoIPC does not need to track individua
 
 NOTE: To create a pseudonymisation list you can use the templates (excel spreadsheet and paper datasheet) available in the https://neoipc.org/surveillance/resources/[resources section] of our website.
 
-.Example pseudonymisation list 
+.Example pseudonymisation list
 [cols=">1,^2,^2,^3,^2,^4",stripes=odd]
 |===
 |No |NeoIPC-ID |Patient-ID |Patient Name |Date of Birth |Comments
@@ -406,8 +405,7 @@ include::NeoIPC-Core-LCBSI-With-Common-Commensal-Definition.adoc[]
 NEC surveillance criteria consist of either a combination of radiological findings and clinical signs or a diagnosis based on surgical evidence.
 The NEC dataset includes information on whether the patient has an intestinal perforation.
 However, this is not one of the surveillance definition criteria.
-This means that you should not report cases where you have surgical evidence of intestinal perforation without evidence of primary necrosis or pneumatosis intestinalis (e.g. spontaneous bowel 
-perforation) as NEC.
+This means that you should not report cases where you have surgical evidence of intestinal perforation without evidence of primary necrosis or pneumatosis intestinalis (e.g. spontaneous bowel perforation) as NEC.
 
 include::NeoIPC-Core-Necrotising-Enterocolitis-Definition.adoc[]
 
@@ -434,7 +432,7 @@ The earliest date of the event is day 3 of ventilation.
 |5 No improvement, CPAP continues |
 |===
 
-.Hospital-acquired pneumonia - device associated 
+.Hospital-acquired pneumonia - device associated
 [%unbreakable, cols=">1,1,2"]
 |===
 |NIV/INV Day |Daily minimum FiO~2~ (oxygen concentration, %) |Comments
@@ -462,7 +460,8 @@ The following surveillance times apply in detail (day 1 = the procedure date):
 Follow-up for SSIs can be terminated preliminarily for a surgical procedure for two reasons:
 
 * Death, transfer, or discharge of the patient.
-* A revision procedure in the same area. This will start a new follow-up period for the revision procedure though.
+* A revision procedure in the same area.
+This will start a new follow-up period for the revision procedure though.
 
 Minor interventions such as simple punctures of hematoma/seroma do not count as revision procedures.
 Surveillance cannot be terminated by such minor procedures, and they do not start a new follow-up period.
@@ -470,15 +469,15 @@ Surveillance cannot be terminated by such minor procedures, and they do not star
 The following inclusion criteria apply to all SSIs:
 
 * Record the main procedure and the associated ICHIfootnote:[International Classification of Health Interventionspass:p[ +]
-https://www.who.int/standards/classifications/international-classification-of-health-interventions] code. Only in complex surgical interventions where one main procedure is not sufficient to adequately describe the procedure, up to 2 further ICHI codes can be recorded.
+https://www.who.int/standards/classifications/international-classification-of-health-interventions] code.
+Only in complex surgical interventions where one main procedure is not sufficient to adequately describe the procedure, up to 2 further ICHI codes can be recorded.
 * The type of SSI (superficial incisional, deep incisional, or organ/space) reported must reflect the deepest tissue level where SSI criteria are met during the surveillance period.
 +
 **Example:** An SSI started as a deep incisional SSI on day 10 of the SSI surveillance period and then a week later (Day 17) meets the criteria for an organ/space SSI.
 You must report it as organ/space SSI regardless of superficial or deep tissue involvement.
-The day of infection in this case would be “Day 17”. 
+The day of infection in this case would be “Day 17”.
 
-* The patient must not be deceased (e.g., post-mortem surgery in case of organ donation is 
-excluded). 
+* The patient must not be deceased (e.g., post-mortem surgery in case of organ donation is excluded).
 
 === Superficial Incisional SSI
 
@@ -511,8 +510,11 @@ Some of them (e.g., patient id and patient name) are used for your local documen
 [[enrolment_neoipc-id]]NeoIPC-ID (NeoIPC patient identifier):: The unique id you assign to the patient for tracking in the reporting platform.
 We advise you to store this information in a pseudonymisation list.
 +
-NOTE: Use this identifier to uniquely identify a patient in the system. Ideally use a unique random string of characters. If you have a requirement to identify a patient you have entered here, you can use this identifier as the NeoIPC key for pseudonymisation. NEVER use an identifier that is used anywhere else and that you do not fully control (e.g. do NOT use the patient id from your hospital information system). 
-[[enrolment_patient-id]]Patient-ID:: The unique id of the patient in the hospital, which most of the time comes from the hospital information system (HIS) or the patient data management system (PDMS). 
+NOTE: Use this identifier to uniquely identify a patient in the system.
+Ideally use a unique random string of characters.
+If you have a requirement to identify a patient you have entered here, you can use this identifier as the NeoIPC key for pseudonymisation.
+NEVER use an identifier that is used anywhere else and that you do not fully control (e.g. do NOT use the patient id from your hospital information system).
+[[enrolment_patient-id]]Patient-ID:: The unique id of the patient in the hospital, which most of the time comes from the hospital information system (HIS) or the patient data management system (PDMS).
 [[enrolment_patient-name]]Patient name:: The patient's name (e.g., given name followed by family name).
 
 NOTE: The patient ID and the patient name are not part of the NeoIPC dataset and must not be submitted to the data collection platform (e.g., do NOT use any of them as NeoIPC-ID).
@@ -547,7 +549,8 @@ For infants born in your hospital this is the same as the date of birth.
 * Admitted from delivery room (initial admission for infants delivered in your hospital)
 * Transferred/readmitted to your hospital on the day of birth
 * Transferred/readmitted to your hospital the day after birth or later
-[[admission-day-of-life]]Admission on day of life:: For infants that have not been delivered in your own hospital, record the infant's day of life on the day of admission (Day of birth = Day of Life 1. The next day, starting at 00:00, is the second day of life.)
+[[admission-day-of-life]]Admission on day of life:: For infants that have not been delivered in your own hospital, record the infant's day of life on the day of admission (Day of birth = Day of Life 1.
+The next day, starting at 00:00, is the second day of life.)
 
 === Surveillance End
 
@@ -570,8 +573,8 @@ Fortified breast milk is considered as breast milk.
 Days where no doses were applied between the first and the last dose (e.g., skipped doses because of high drug levels in therapeutic drug monitoring) are counted as if a dose was applied.
 Days after the last dose are not counted irrespective of the measured or assumed drug level in the patient.] when the infant received (any) systemic antibiotics.
 Only one antibiotic day can be recorded per day, which means that a day when the patient received multiple antibiotics is still counted as one antibiotic day.
-[[surveillance-end_antibiotic-substance-days]]Antibiotic days, per substance 1,2,3,...:: The cumulative number of daysfootnote:ab-days-comment[] when the infant received a 
-specified systemic antibiotic substance. Exp.: Gentamicin days
+[[surveillance-end_antibiotic-substance-days]]Antibiotic days, per substance 1,2,3,...:: The cumulative number of daysfootnote:ab-days-comment[] when the infant received a specified systemic antibiotic substance.
+Exp.: Gentamicin days
 
 == Surgical Procedure
 
@@ -591,33 +594,34 @@ In addition, clean wounds are primarily closed and, if necessary, drained with c
 Operative incisional wounds that follow no penetrating (blunt) trauma should be included in this category if they meet the criteria.
 [[surgical-procedure_wound-class-ii]]Class II/Clean-Contaminated::: An operative wound in which the respiratory, alimentary, genital, or urinary tracts are entered under controlled conditions and without unusual contamination.
 Specifically, operations involving the biliary tract, appendix, vagina, and oropharynx are included in this category, provided no evidence of infection or major break in a sterile technique is encountered.
-[[surgical-procedure_wound-class-iii]]Class III/Contaminated::: Open, fresh, accidental wounds. In addition, operations with major breaks in a sterile technique (eg, open cardiac massage) or gross spillage from the gastrointestinal tract, and incisions in which acute or no purulent inflammation is encountered are included in this category.
-[[surgical-procedure_wound-class-iv]]Class IV/Dirty-Infected::: Old traumatic wounds with retained devitalized tissue and those that involve existing clinical infection or perforated viscera. This definition suggests that the organisms causing postoperative infection were present in the operative field before the operation.
+[[surgical-procedure_wound-class-iii]]Class III/Contaminated::: Open, fresh, accidental wounds.
+In addition, operations with major breaks in a sterile technique (eg, open cardiac massage) or gross spillage from the gastrointestinal tract, and incisions in which acute or no purulent inflammation is encountered are included in this category.
+[[surgical-procedure_wound-class-iv]]Class IV/Dirty-Infected::: Old traumatic wounds with retained devitalized tissue and those that involve existing clinical infection or perforated viscera.
+This definition suggests that the organisms causing postoperative infection were present in the operative field before the operation.
 
 [[surgical-procedure_asa-score]]ASA score:: The American Society of Anesthesiologists' (ASA) Physical Status Classification System to assess and communicate a patient’s pre-anesthesia medical co-morbidities:
 +
 --
-[[surgical-procedure_asa-score-i]]ASA I::: A normal healthy patient 
-[[surgical-procedure_asa-score-ii]]ASA II::: A patient with mild systemic disease 
-[[surgical-procedure_asa-score-iii]]ASA III::: A patient with severe systemic disease 
-[[surgical-procedure_asa-score-iv]]ASA IV::: A patient with severe systemic disease that is a constant threat to life 
+[[surgical-procedure_asa-score-i]]ASA I::: A normal healthy patient
+[[surgical-procedure_asa-score-ii]]ASA II::: A patient with mild systemic disease
+[[surgical-procedure_asa-score-iii]]ASA III::: A patient with severe systemic disease
+[[surgical-procedure_asa-score-iv]]ASA IV::: A patient with severe systemic disease that is a constant threat to life
 [[surgical-procedure_asa-score-v]]ASA V::: A moribund patient who is not expected to survive without the operation
 --
 +
 Visit https://www.asahq.org/standards-and-guidelines/statement-on-asa-physical-status-classification-system.
 [[surgical-procedure_endoscopic]]Endoscopic procedure::
-Yes::: The operation was performed entirely endoscopically, 
+Yes::: The operation was performed entirely endoscopically,
 No::: The procedure was performed open or endoscopically assisted, or switched to an open technique during an endoscopic procedure.
 [[surgical-procedure_emergency]]Emergency procedure::
-Yes::: A procedure that is documented per the facility’s protocol to be an Emergency or Urgent procedure. 
+Yes::: A procedure that is documented per the facility’s protocol to be an Emergency or Urgent procedure.
 No::: The intervention is initiated and performed in a planned manner.
 Unknown::: No information available.
 [[surgical-procedure_primary-closure]]Primary closure:: The closure of the skin level during the original surgery, regardless of the presence of wires, wicks, drains, or other devices or objects extruding through the incision.
 This category includes surgeries where the skin is closed by some means.
 Thus, if any portion of the incision is closed at the skin level, by any manner, a designation of primary closure should be assigned to the surgery.
 +
-NOTE: If a procedure has multiple incision/laparoscopic trocar sites and any of the incisions 
-are closed primarily then the procedure technique is recorded as primary closed.
+NOTE: If a procedure has multiple incision/laparoscopic trocar sites and any of the incisions are closed primarily then the procedure technique is recorded as primary closed.
 
 [[surgical-procedure_revision-procedure]]Revision procedure:: Revision procedures are follow-up, replacement or corrective procedures after an initial procedure.
 A revision procedure terminates the follow-up for the primary procedure and starts a new follow-up period.
@@ -646,6 +650,91 @@ For example, a fresh gunshot wound to the abdomen may be a trauma with a high wo
 
 [[general-infection-data_infection-date]]Infection date:: The day the first infection symptoms appeared.
 If no symptoms occur, the day of first positive culture at the primary infection site.
+
+[[general-infection-data_common-commensal]]Common commensal:: A type of micro-organism (e.g., coagulase-negative staphylococci), that is commonly present on epithelium-covered body surfaces (e.g., skin).
+When one or multiple of these species grow in a blood culture, a contamination is more likely than when a recognised pathogen grows.
+See Master Organism List on https://neoipc.org/surveillance/resources/
+
+[[general-infection-data_mdros]]Multidrug-resistant organisms (MDROs):: Select the one(s) applicable to the isolated organism;
+* MRSA/VRE/3GCR: Choose if one of the following applies:
+** MRSA: Methicillin-resistant Staphylococcus aureus
+** VRE: Vancomycin-resistant Enterococci
+** 3GCR: Multi drug resistant gram-negative pathogen resistant to 3rd generation Cephalosporins according to own lab’s cut-off values (refers to phenotypic resistance or ESBL-producing organisms)
+* Carbapenem resistant: Resistant to at least one of the following (Imipenem, Meropenem, Ertapenem) according to own lab's cut-off values (refers to phenotypic resistance or carbapenemase-producing organisms.)
+* Colistin resistant: Resistant to colistin according to own lab's cut-off values.
+
+Options for each group:
+
+* Yes: the isolated organism is resistant to the specified antibiotic group(s).
+* No: the isolated organism is not resistant to the specified antibiotic group(s).
+* Not tested: the isolated organism was not tested for resistance to the specified antibiotic group(s).
+
+[[general-infection-data_secondary-bsi]]Secondary bloodstream infection:: A BSI that is thought to be seeded from a site-specific infection at another body site (except for catheter-associated infections).
+A BSI can be attributed to a site-specific infection (NEC, PN or SSI) if it occurs in a 17-day period that includes the day of infection (=first symptoms of site-specific infection), 3 days prior, and 13 days after.
+
+Collecting data about the secondary BSI is optional; therefore, it is possible to select “No follow-up” if you are not following patients for secondary BSI.
+For detailed information, please see Secondary bloodstream infection.
+
+* Yes: if you are following patients for secondary BSI and the patient has developed a secondary sepsis that meets the definition of NeoIPC (activates a field below where you can enter identified organisms)
+* No: if you are following patients for secondary BSI and the patient has not developed a secondary sepsis that meets the definition of NeoIPC
+* No follow-up: if you are not following patients for secondary BSI.
+
+=== BSI Specific Data
+
+[[bsi-specific-data_cvc]]Central vascular catheter (CVC):: An intravascular catheter that terminates at or close to the heart or in one of the great vessels which is used for infusion, withdrawal of blood, or hemodynamic monitoring.
+Examples:
++
+--
+* Central venous catheter (CVC), including non-tunnelled, tunnelled and implanted central venous catheters.
+* Peripherally inserted central venous catheter (PICC)
+* Umbilical artery catheter (UAC) or umbilical venous catheter (UVC)
+
+Extracorporeal membrane oxygenation (ECMO) and arterial catheters (except pulmonary artery, aorta, or umbilical artery) are NOT considered as CVC.
+The following are considered great vessels for the purpose of reporting CVCs:
+
+* Aorta
+* Pulmonary artery
+* Superior vena cava
+* Inferior vena cava
+* Brachiocephalic veins
+* Internal jugular veins
+* Subclavian veins
+* External iliac veins
+* Common iliac veins
+* Femoral veins
+* Umbilical artery/vein
+--
+
+[[bsi-specific-data_cvc-associated-bsi]]CVC-associated BSI:: A primary bloodstream infection is considered central vascular catheter (CVC)-associated if the CVC has been in place for at least three consecutive days on the day of infection (=first symptoms or first positive diagnostic test; e.g. culture) or the day before.
+
+[[bsi-specific-data_cvc-day]]CVC-day:: A day in which the patient had a CVC placed for at least 12 hours cumulatively.
+
+[[bsi-specific-data_pvc]]Peripheral vascular catheter (PVC):: A PVC is a catheter placed into a peripheral vein and does not reach one of the great vessels mentioned under CVC.
+
+[[bsi-specific-data_pvc-associated-bsi]]PVC-associated BSI:: A primary bloodstream infection is considered peripheral vascular catheter (PVC)-associated if the PVC has been present for at least three consecutive days on the day of infection (=first symptoms or first positive diagnostic test; e.g. culture) or the day before and does not meet the criteria for CVC-associated BSI.
+That means, if a patient developing a bloodstream infection meets the criteria for both, PVC- and CVC-association, the CVC is considered as the device with the relatively higher infection risk and the BSI should be recorded as CVC-associated BSI.
+
+[[bsi-specific-data_pvc-day]]PVC-day:: A day in which the patient had a PVC placed for at least 12 hours cumulatively.
+
+[[bsi-specific-data_iv-ab-therapy-initiated]]Intravenous antibiotic therapy for five or more days initiated:: Antibiotic treatment for at least five days was initiated.
+The day of the first dose and the day of the last dose are counted.
+Days where no dose was administered between the first and the last dose (e.g., skipped doses because of high drug levels in therapeutic drug monitoring) are counted as if a dose had been administered.
+Days after the last dose are not counted regardless of the patient's measured or assumed drug level.
+If the infant died, was discharged, or transferred before the end of the five-day course of intravenous antibiotics, this condition is met if treatment was scheduled for five days or more.
+
+[[bsi-specific-data_increased-oxygen-demand-or-ventilatory-support]]New/more frequent episodes of apnoea or increases in oxygen demand or ventilatory support:: New or increased frequency of episodes of apnea lasting more than 20 seconds, or an increase in the amount of oxygen required to maintain adequate oxygenation, or an escalation of ventilatory support, such as increased flow with high-flow therapy or intubation for invasive ventilation.
+
+[[bsi-specific-data_enteral-feeding-intolerance]]Enteral feeding intolerance, abdominal distension or ileus:: Enteral feeding intolerance, abdominal distension or ileus without imaging findings or surgical findings that would otherwise suggest a necrotizing entrocolitis or a spontaneous intestinal perforation.
+
+[[bsi-specific-data_unexplained-metabolic-acidosis]]Unexplained metabolic acidosis:: Unexplained metabolic acidosis with a base deficit greater (more negative) than 10 mmol/L (10 mEq/L).
+
+=== NEC Specific Data
+
+[[bsi-specific-data_portal-veinous-gas]]Portal veinous gas:: Accumulation of gas (-bubbles) in the portal vein and its branches.
+
+=== Pneumonia Specific Data
+
+
 
 
 
