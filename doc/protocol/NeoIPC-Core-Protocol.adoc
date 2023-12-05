@@ -690,6 +690,7 @@ Examples:
 * Umbilical artery catheter (UAC) or umbilical venous catheter (UVC)
 
 Extracorporeal membrane oxygenation (ECMO) and arterial catheters (except pulmonary artery, aorta, or umbilical artery) are NOT considered as CVC.
+
 The following are considered great vessels for the purpose of reporting CVCs:
 
 * Aorta
@@ -705,16 +706,16 @@ The following are considered great vessels for the purpose of reporting CVCs:
 * Umbilical artery/vein
 --
 
-[[bsi-specific-data_cvc-associated-bsi]]CVC-associated BSI:: A primary bloodstream infection is considered central vascular catheter (CVC)-associated if the CVC has been in place for at least three consecutive days on the day of infection (=first symptoms or first positive diagnostic test; e.g. culture) or the day before.
+[[bsi-specific-data_cvc-associated-bsi]]CVC-associated BSI:: A primary bloodstream infection is considered <<bsi-specific-data_cvc,CVC>>-associated if the CVC has been in place for at least three consecutive days on the day of infection (=first symptoms or first positive diagnostic test; e.g. culture) or the day before.
 
-[[bsi-specific-data_cvc-day]]CVC-day:: A day in which the patient had a CVC placed for at least 12 hours cumulatively.
+[[bsi-specific-data_cvc-day]]CVC-day:: A day in which the patient had a <<bsi-specific-data_cvc,CVC>> placed for at least 12 hours cumulatively.
 
 [[bsi-specific-data_pvc]]Peripheral vascular catheter (PVC):: A PVC is a catheter placed into a peripheral vein and does not reach one of the great vessels mentioned under CVC.
 
-[[bsi-specific-data_pvc-associated-bsi]]PVC-associated BSI:: A primary bloodstream infection is considered peripheral vascular catheter (PVC)-associated if the PVC has been present for at least three consecutive days on the day of infection (=first symptoms or first positive diagnostic test; e.g. culture) or the day before and does not meet the criteria for CVC-associated BSI.
+[[bsi-specific-data_pvc-associated-bsi]]PVC-associated BSI:: A primary bloodstream infection is considered <<bsi-specific-data_pvc,PVC>>-associated if the PVC has been present for at least three consecutive days on the day of infection (=first symptoms or first positive diagnostic test; e.g. culture) or the day before and does not meet the criteria for CVC-associated BSI.
 That means, if a patient developing a bloodstream infection meets the criteria for both, PVC- and CVC-association, the CVC is considered as the device with the relatively higher infection risk and the BSI should be recorded as CVC-associated BSI.
 
-[[bsi-specific-data_pvc-day]]PVC-day:: A day in which the patient had a PVC placed for at least 12 hours cumulatively.
+[[bsi-specific-data_pvc-day]]PVC-day:: A day in which the patient had a <<bsi-specific-data_pvc,PVC>> placed for at least 12 hours cumulatively.
 
 [[bsi-specific-data_iv-ab-therapy-initiated]]Intravenous antibiotic therapy for five or more days initiated:: Antibiotic treatment for at least five days was initiated.
 The day of the first dose and the day of the last dose are counted.
@@ -734,8 +735,43 @@ If the infant died, was discharged, or transferred before the end of the five-da
 
 === Pneumonia Specific Data
 
+[[pneumonia-specific-data_-increase-in-respiratory-support]]Beginning or Increase in Respiratory Support::
++
+--
+New initiation of respiratory support or escalation of existing level of respiratory support...:::
++
+* Increase in need for FiO2 ≥ 0.25 (25 points) within 24 hours (daily minimum FiO2 values must be taken into account here)
++
+OR
+* begin of non-invasive ventilatory support (excluding switch from invasive ventilation)
++
+OR
+* begin of invasive mechanical ventilation (including switch from non-invasive ventilatory support)
 
+...that does not improve within less than 2 days::: The above-mentioned condition should not improve within two days.
 
+...after at least 2 days of stability or improvement::: A stable or improving baseline period of at least two days is required before the above condition occurs.
 
+NOTE: To meet the criteria of device associated hospital-acquired pneumonia, patients must be ventilated for at least 4 calendar days (day 1 is the day invasive/non-invasive ventilation starts). The earliest date of the event is day 3 of ventilation.
+--
+
+[[pneumonia-specific-data_inv]]Invasive mechanical ventilation (INV):: Ventilation via endotracheal or tracheostomy tube.
+
+[[pneumonia-specific-data_inv-associated-pneumonia]]INV-Associated Pneumonia:: A pneumonia is associated with <<pneumonia-specific-data_inv,INV>> if the patient had an endotracheal or tracheostomy tube for at least 3 consecutive days on the day of infection (=first symptoms or first positive culture) or on the day before.
+
+[[pneumonia-specific-data_inv-day]]INV-Day:: A day in which the patient was ventilated invasively via endotracheal or tracheostomy tube for at least 12 hours cumulatively.
+
+[[pneumonia-specific-data_niv]]Non-invasive ventilatory support (NIV):: Ventilatory support via CPAP or High-Flow Nasal Cannula.
+
+[[pneumonia-specific-data_niv-associated-pneumonia]]NIV-Associated Pneumonia:: A pneumonia is associated with <<pneumonia-specific-data_niv,NIV>> if the patient received non-invasive ventilatory support (e.g., CPAP or High-Flow Nasal Cannula) for at least 3 consecutive days on the day of infection (=first symptoms or first positive culture) or on the day before.
+
+[[pneumonia-specific-data_niv-day]]NIV-Day:: A day in which the patient received non-invasive ventilatory support via CPAP or High-Flow Nasal Cannula for at least 12 hours cumulatively.
+
+[[pneumonia-specific-data_organisms-rt]]Organisms Identified From Respiratory Tract:: At least one organism has been identified from respiratory tract by a culture or non-culture based microbiologic testing method which is performed for purposes of clinical diagnosis or treatment (for example, NOT Active Surveillance Culture/Testing (ASC/AST)).
++
+[[pneumonia-specific-data_organisms-lrt]]Recovered from lower respiratory tract::: Select if fungal, bacterial or viral pathogens (viral gene, antigen or antibody via e.g. EIA, FAMA, shell vial assay, PCR) are detected in lower respiratory tract.
+[[pneumonia-specific-data_organisms-urt]]Recovered from upper respiratory tract::: Select only if viral pathogens are detected in upper respiratory tract.
+
+=== SSI Specific Data
 
 include::NeoIPC-Antibiotics.adoc[]
