@@ -21,4 +21,5 @@ endif::[]
 ifdef::backend-docbook5[]
 :full-width: scaledwidth=100%
 endif::[]
+:stem:
 :toc:
