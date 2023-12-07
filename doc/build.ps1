@@ -128,14 +128,10 @@ foreach ($targetCulture in $targetCultures)
         if (Test-RebuildRequired $buildDir/NeoIPC-Antibiotics.adoc $antibioticsDir/NeoIPC-Antibiotics.csv) {
             Write-Verbose "Creating appendix table for antibiotics"
 
-            '[appendix]','= List of Antibiotics','','[stripes=odd]','|===','|Name |ATC-Code','' | Out-File -LiteralPath $buildDir/NeoIPC-Antibiotics.adoc -Encoding utf8NoBOM
-
             Import-Csv -LiteralPath $antibioticsDir/NeoIPC-Antibiotics.csv -Encoding utf8 |
                 Sort-Object name |
                 ForEach-Object { "|$($_.name) |$($_.atc_code)" } |
                 Out-File -LiteralPath $buildDir/NeoIPC-Antibiotics.adoc -Encoding utf8NoBOM -Append
-
-            '|===' | Out-File -LiteralPath $buildDir/NeoIPC-Antibiotics$langSuffix.adoc -Encoding utf8NoBOM -Append
         }
     }
     else
@@ -147,8 +143,6 @@ foreach ($targetCulture in $targetCultures)
 
         if (Test-RebuildRequired $buildDir/NeoIPC-Antibiotics$langSuffix.adoc $antibioticsDir/NeoIPC-Antibiotics.csv $antibioticsDir/NeoIPC-Antibiotics$langSuffix.csv) {
             Write-Verbose "Creating appendix table for antibiotics"
-
-            '[appendix]','= List of Antibiotics','','[stripes=odd]','|===','|Name |ATC-Code','' | Out-File -LiteralPath $buildDir/NeoIPC-Antibiotics$langSuffix.adoc -Encoding utf8NoBOM
 
             $hash = @{}
             Import-Csv -LiteralPath $antibioticsDir/NeoIPC-Antibiotics$langSuffix.csv -Encoding utf8 |
@@ -186,8 +180,6 @@ foreach ($targetCulture in $targetCultures)
                     "|$name |$($_.atc_code)"
                 } |
                 Out-File -LiteralPath $buildDir/NeoIPC-Antibiotics$langSuffix.adoc -Encoding utf8NoBOM -Append
-
-            '|===' | Out-File -LiteralPath $buildDir/NeoIPC-Antibiotics$langSuffix.adoc -Encoding utf8NoBOM -Append
         }
     }
     if (Test-RebuildRequired $buildImgDir/NeoIPC-Core-Title-Page$langSuffix.svg $resDir/NeoIPC-Core-Title-Page$langSuffix.resx $transDir/NeoIPC-Core-Title-Page.xslt) {

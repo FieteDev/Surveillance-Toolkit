@@ -987,4 +987,12 @@ To learn more about Surveillance, write to:
 
 neoipc-support@charite.de
 
+[appendix]
+== List of Antibiotics
+
+[stripes=odd]
+|===
+|Name |ATC-Code
+
 include::NeoIPC-Antibiotics.adoc[]
+|===
