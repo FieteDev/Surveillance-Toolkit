@@ -791,7 +791,9 @@ Example::
 NOTE: The SSI reported must reflect the deepest tissue level where SSI criteria are met during the surveillance period.
 
 Example::
-If a SSI started as a deep incisional SSI on day 10 of the SSI surveillance period and then a week later (Day 17) meets criteria for an organ/space SSI. You must report it as organ/space SSI regardless of superficial or deep tissue involvement. The day of infection in this case would be “Day 17”.
+If a SSI started as a deep incisional SSI on day 10 of the SSI surveillance period and then a week later (Day 17) meets criteria for an organ/space SSI.
+You must report it as organ/space SSI regardless of superficial or deep tissue involvement.
+The day of infection in this case would be “Day 17”.
 --
 
 [[ssi-specific-data_organism-identified]]Organism(s) Identified From Surgical Site:: At least one organism has been identified from surgical site by a culture or non-culture based microbiologic testing method which is performed for purposes of clinical diagnosis or treatment (for example, NOT Active Surveillance Culture/Testing (ASC/AST)).
@@ -811,7 +813,8 @@ For the core module, the rates are generally stratified into 4 groups according 
 
 ==== Device Utilization
 
-A device utilization rate describes the percentage of patient days on which a specific device was used. It is calculated by dividing the number of device days by the number of patient days and multiplying the result by 100.
+A device utilization rate describes the percentage of patient days on which a specific device was used.
+It is calculated by dividing the number of device days by the number of patient days and multiplying the result by 100.
 
 stem:["CVC Utilisation Rate" = "Total CVC Days" / "Total Patient Days" xx 100 ]
 
@@ -819,8 +822,169 @@ stem:["PVC Utilisation Rate" = "Total PVC Days" / "Total Patient Days" xx 100 ]
 
 stem:["INV Utilisation Rate" = "Total INV Days" / "Total Patient Days" xx 100 ]
 
-stem:["NIV Utilisation Rate" = "Total NIV Days" / "Total Patient Days" xx 100 ]
+stem:["NIV Utilisation Rate" = "Total NIV Days" / "Total Patient Days" xx 100]
 
 ==== Antibiotic Use
+Antibiotic use rate describes the percentage of patient days on which systemic antibiotics were used in relation to the total patient days.
+It is calculated by dividing the number of antibiotic days by the number of patient days and multiplying the result by 100.
+
+stem:["Antibiotic Use Rate" = "Total Antibiotic Days" / "Total Patient Days" xx 100]
+
+In addition to the overall antibiotic use rate, antibiotic use rates and proportions of patients receiving a substance are calculated for individual substances and groups of substances.
+
+The substances and groups are derived from the Anatomical Therapeutic Chemical (ATC) Classificationfootnote:[Anatomical Therapeutic Chemical Classificationpass:p[ +]
+https://www.who.int/tools/atc-ddd-toolkit/atc-classification] as published in the most recent ATC/DDD Indexfootnote:[ATC/DDD Indexpass:p[ +]
+https://www.whocc.no/atc_ddd_index/].
+
+Currently the ATC 1st, 2nd, 4th and 5th level are used for grouping substances.
+
+Since the numbers in the individual groups usually get very small, the substance and group specific use rates are calculated by dividing the number of substance (group) days by the number of patient days and multiplying the result by 1000.
+
+stem:["Substance Group Use Rate" = "Total Therapy Days for Substance Group" / "Total Patient Days" xx 100]
+
+The proportion of patients receiving any specific substance(s) of a substance group is calculated as ratio between the total number of patients receiving a specific substance or group of antibiotics and the total number of patients receiving any kind of antibiotic multiplied by 100.
+
+stem:["Proportion of Patients Receiving an AB Substance or Group" = "Total Therapy Days for that Substance or Group" / "Total Patient Days" xx 100]
+
+==== Protective Factor Implementation
+
+A protective factor utilization rate describes the percentage of patient days on which a patient received a specific protective factor, such as breast milk, probiotic or kangaroo mother care.
+It is calculated by dividing the number of protective factor days by the number of patient days and multiplying the result by 100.
+
+stem:["Breast Milk Intake Rate" = "Total Breast Milk Days" / "Total Patient Days" xx 100]
+
+stem:["Probiotic Usage Rate" = "Total Probiotic Days" / "Total Patient Days" xx 100]
+
+stem:["Kangaroo Care Implementation Rate" = "Total Kangaroo Care Days" / "Total Patient Days" xx 100]
+
+=== Infections
+
+==== Incidence Densities
+
+Since a substantial proportion of infections cannot be linked to a specific risk factor, incidence densities are calculated for bloodstream infections, pneumonia, NEC.
+The risk factor here represents the cumulative number of patient days and is standardized as 1000 patient days.
+
+stem:["BSI Incidence Density" = "Total BSI Cases" / "Total Patient Days" xx 1000]
+
+stem:["Pneumonia Incidence Density" = "Total Pneumonia Cases" / "Total Patient Days" xx 1000]
+
+stem:["NEC Incidence Density" = "Total NEC Cases" / "Total Patient Days" xx 1000]
+
+==== Device-associated Infections
+
+A device-associated infection rate is an important quality management metric and describes how many device-associated infections occur per 1000 device days.
+In this process called standardization, infections (e.g., BSI) occurring in the presence of a certain risk factor (e.g., CVC) are associated with the total number of days at risk (e.g., CVC Days) and the result is multiplied by 1000.
+
+stem:["CVC-associated BSI Rate" = "Total BSI Cases in Patients With CVC" / "Total CVC Days" xx 1000]
+
+stem:["PVC-associated BSI Rate" = "Total BSI Cases in Patients With PVC" / "Total PVC Days" xx 1000]
+
+stem:["INV-associated Pneumonia Rate" = "Total Pneumonia Cases in Patients With INV" / "Total INV Days" xx 1000]
+
+stem:["NIV-associated Pneumonia Rate" = "Total Pneumonia Cases in Patients With NIV" / "Total NIV Days" xx 1000]
+
+==== Surgical Site Infections
+
+Surgical site infection (SSI) rates define the percentage of SSI that occur during the observation period after an operative procedure.
+It is calculated by dividing the number of SSIs occurring after a surgical procedure by the number of surgical procedures and multiplying the result by 100.
+Since the risk of developing a SSI depends on the type of surgical procedure, multiple SSI rates are calculated for groups of similar procedures.
+Nevertheless, an overall SSI rate will be calculated to account for the fact that surgery in VLBW/VPT infants is less frequent than in adults and grouping procedures may result in very low procedure counts per group.
+
+stem:["Overall SSI Rate" = "Total SSI Cases" / "Total Number of Surgeries" xx 100]
+
+stem:["Grouped SSI Rate" = "Total SSI Cases Observed After the Procedures in This Group" / "Total Number of Procedures in This Group" xx 100]
+
+==== Standardized Infection Rate
+
+With the infection rates described above, it is possible to observe risk factors and infections for the 3 birthweight classes in detail.
+However, 500 g birth weight is a relatively crude stratification for neonatal infection risk, and it also does not account the fact that infants may be transferred to other departments (e.g., for surgery or to a department closer to the parents’ home) long before they would normally be discharged and that the high-risk days of the stabilization phase would accumulate in some neonatology departments while others would accumulate the low risk days of already stabilized infants.
+To account for this, NeoIPC calculates a standardized infection rate (SIR) , which compares infection frequencies between departments based on their patient population composition.
+
+Standardized infection rates are calculated based on two factors:
+
+. Risk of infection for a certain birth weight
+. Risk of infection for a certain day of life
+
+From the reference database, the average risk of BSI or pneumonia for a certain day of life of an infant with a certain birth weight is calculated.
+
+After this, the number of expected infections (cumulated risk) for a department is calculated by summing the average risks of the infants and the respective days they spent in the department.
+
+The SIR represents the ratio of observed infections to expected infections in a department and can give a general overview of the infection risk in a department.
+
+stem:["Standardized Infection Rate" = "Total Infections Observed" / "Total infections expected"]
+
+When the standardized infection rate is greater than one, you observed more infections than you would expect from your patient composition when compared to the reference data.
+
+When the standardized infection rate equals one, you observed the same number of infections as you would expect from your patient composition when compared to the reference data.
+
+When the standardized infection rate is less than one, you observed less infections than you would expect from your patient composition when compared to the reference data.
+
+== Abbreviations
+
+[horizontal]
+3GCR:: Multi drug resistant gram-negative pathogen resistant to 3^rd^ generation Cephalosporins
+AB:: Antibiotic
+ASA:: American Society of Anaesthesiologists
+BE:: Base Excess
+BSI:: Bloodstream Infection
+BW:: Birthweight
+CDC:: Centers for Disease Control and Prevention
+CMV:: Cytomegalovirus
+CRP:: C-reactive Protein
+CSF:: Cerebrospinal Fluid
+CT:: Computer Tomography
+CVC:: Central Venous Catheter
+ECMO:: Extracorporeal Membrane Oxygenation
+ESBL:: Extended spectrum beta-lactamase
+GA:: Gestational Age
+HIS:: Hospital Information System
+HIV:: Human Immunodeficiency Virus
+ICHI:: International classification of health interventions
+INV:: Invasive Ventilation
+IPC:: Infection Prevention and Control
+KC:: Kangaroo care
+LCBSI:: Laboratory Confirmed Bloodstream Infection
+MDRO:: Multidrug Resistant Organism
+MRSA:: Methicillin-resistant Staphylococcus aureus
+NEC:: Necrotizing Enterocolitis
+NICU:: Neonatal intensive care unit
+NIV:: Non-invasive Ventilation
+OP:: Operative Procedure
+PDMS:: Patient Data Management System
+PICC:: Peripherally Inserted Central Venous Catheter
+PLT:: Platelet
+PVC:: Peripheral Venous Catheter
+RCT:: Randomised Controlled Trial
+SSI:: Surgical Site Infection
+UAC:: Umbilical Artery Catheter
+UVC:: Umbilical Venous Catheter
+VAE:: Ventilator Associated Event
+VAP:: Ventilator Associated Pneumonia
+VLBW:: Very Low Birthweight
+VPT:: Very Preterm
+VRE:: Vancomycin-resistant Enterococcus
+WBC:: White Blood Cells
+
+== Imprint
+NeoIPC Project
+
+Fondazione Penta Onlus +
+Corso Stati Uniti, 4 +
+35127 Padova +
+ITALY
+
+https://neoipc.org/
+
+To learn more about NeoIPC, write to:
+
+communication@pentafoundation.org
+
+To learn more about the NeoDeco Trial and the Clinical Practice Network, write to:
+
+neoipc@sgul.ac.uk
+
+To learn more about Surveillance, write to:
+
+neoipc-support@charite.de
 
 include::NeoIPC-Antibiotics.adoc[]
