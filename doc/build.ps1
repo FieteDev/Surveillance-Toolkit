@@ -222,7 +222,12 @@ foreach ($targetCulture in $targetCultures)
         "$buildImgDir/NeoIPC-Core-Master-Data-Collection-Sheet-Image$langSuffix.svg"
         ))) {
         Write-Information "Creating PDF"
-        asciidoctor-pdf -a $revRemark -a $revDate -r asciidoctor-mathematical --warnings --trace --failure-level WARN --destination-dir $outDir --out-file NeoIPC-Core-Protocol$langSuffix.pdf $buildDir/NeoIPC-Core-Protocol$langSuffix.adoc
+        if ($IsWindows) {
+            Write-Warning "Asciidoctor Mathematical is not supported on Windows. The STEM expressions will not be converted."
+            asciidoctor-pdf -a $revRemark -a $revDate --warnings --trace --failure-level WARN --destination-dir $outDir --out-file NeoIPC-Core-Protocol$langSuffix.pdf $buildDir/NeoIPC-Core-Protocol$langSuffix.adoc
+        } else {
+            asciidoctor-pdf -a $revRemark -a $revDate -a mathematical-format=svg -r asciidoctor-mathematical --warnings --trace --failure-level WARN --destination-dir $outDir --out-file NeoIPC-Core-Protocol$langSuffix.pdf $buildDir/NeoIPC-Core-Protocol$langSuffix.adoc
+        }
     }
     if (($Format -eq 'all' -or $Format -eq 'docx') -and (Test-RebuildRequired $outDir/NeoIPC-Core-Protocol$langSuffix.docx $buildDir/NeoIPC-Core-Protocol$langSuffix.adoc @(
         "$buildDir/NeoIPC-Core-Protocol.header.adoc",
