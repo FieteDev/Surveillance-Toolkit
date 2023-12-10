@@ -39,6 +39,15 @@ To do that run the following command:
 gem install asciidoctor-pdf
 ```
 
+#### AsciiMath
+
+The formulas in the documentation are expressed in [AsciiMath](https://asciimath.org/) syntax.
+To use it we need to install the AsciiMath Gem via the following command:
+
+```console
+gem install asciimath
+```
+
 #### Noto Sans
 
 To install the Noto Sans font please refer to

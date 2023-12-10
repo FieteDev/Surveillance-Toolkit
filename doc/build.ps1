@@ -68,8 +68,8 @@ $outDir = "$PSScriptRoot/out"
 $protocolDir = "$PSScriptRoot/protocol"
 $imgDir = "$protocolDir/img"
 $buildImgDir = "$buildDir/img"
-$resDir = "$protocolDir/res"
-$transDir = "$protocolDir/trans"
+$resDir = "$protocolDir/resx"
+$transDir = "$protocolDir/xslt"
 
 if (-not (Test-Path -LiteralPath $buildDir -PathType Container)) {
     Write-Debug -Message "Build directory does not exist."
