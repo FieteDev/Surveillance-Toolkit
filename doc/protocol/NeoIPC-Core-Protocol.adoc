@@ -194,7 +194,7 @@ NOTE: To create a pseudonymisation list you can use the templates (excel spreads
 .Example pseudonymisation list
 [cols=">1,^2,^2,^3,^2,^4",stripes=odd]
 |===
-|No |NeoIPC-ID |Patient-ID |Patient Name |Date of Birth |Comments
+|№ |NeoIPC-ID |Patient-ID |Patient Name |Date of Birth |Comments
 
 |1 | | | | |
 |2 | | | | |

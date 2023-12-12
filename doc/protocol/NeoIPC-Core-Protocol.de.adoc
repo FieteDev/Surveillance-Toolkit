@@ -3,8 +3,8 @@
 include::NeoIPC-Core-Protocol.header.adoc[]
 :revnumber: 2.0
 
-= Einleitung
-== Was lesen Sie hier?
+== Einleitung
+=== Was lesen Sie hier?
 Dieses Dokument ist das Surveillance-Protokoll für das Kernmodul der NeoIPC-Surveillance, das die Surveillance nosokomialer Infektionen bei Säuglingen mit sehr niedrigem Geburtsgewicht [Very Low Birth Weight] (VLBW)/Sehr Frühgeborenen [Very Preterm] (VPT) umfasst.
 Es ist Teil eines Toolkits für die Surveillance von nosokomialen Infektionen (HAI) in der Neonatologie, das wir im Rahmen des NeoIPC-Projekts entwickelt haben.
 Wenn Sie eine Surveillance von früh auftretenden [early-onset] Infektionen oder nosokomialen Infektionen bei Neugeborenen mit einem Geburtsgewicht von über 1500 g und einem Gestationsalter von mehr als 32 Wochen durchführen möchten, bietet das Toolkit zusätzliche Methoden, die in separaten Protokollen behandelt werden.
@@ -12,7 +12,7 @@ Wenn Sie eine Surveillance von früh auftretenden [early-onset] Infektionen oder
 Dieses Protokoll bietet methodische Hinweise und Unterstützung für die Surveillance von nosokomialen Infektionen auf Neugeborenenstationen oder für diejenigen, die die Entwicklung eines Programms zur Surveillance von nosokomialen Infektionen planen.
 Wenn Sie sich an die hier aufgeführten Methoden und Definitionen halten, können Sie sicherstellen, dass die von Ihnen generierten Surveillance-Daten mit den Referenzdaten des NeoIPC-Projekts vergleichbar sind, auch wenn Sie nicht aktiv an dem Projekt beteiligt sind.
 
-== Was ist das NeoIPC Projekt
+=== Was ist das NeoIPC Projekt
 Im Rahmen des NeoIPC-Projekts möchten wir Sie mit Interventionen und Strategien zur Infektionsprävention und -kontrolle (IPC) auf Ihrer Neugeborenen-Intensivstation unterstützen, insbesondere wenn Sie eine hohe Prävalenz von nosokomialen Infektionen oder multiresistenten Erregern (MRE) beobachten. Wir sind ein internationales Team von Klinikern und Wissenschaftlern aus 13 kooperierenden Partnerinstitutionen mit nachgewiesener Erfahrung in den Bereichen neonatologische Intensivmedizin, neonatale Infektionen, Infektionsprävention und -kontrolle (IPC), Implementierungswissenschaft, Mikrobiologie und Surveillance, die an diesem Projekt mitarbeiten um zwei übergeordnete Ziele zu erreichen:
 
 . Entwicklung und Umsetzung eines innovativen Ansatzes zur Bewertung von IPC-Interventionen in der Neonatologie durch:
@@ -24,11 +24,11 @@ Im Rahmen des NeoIPC-Projekts möchten wir Sie mit Interventionen und Strategien
 
 Dieses Projekt wurde vom Forschungs- und Innovationsprogramm Horizon 2020 der Europäischen Union im Rahmen der Finanzhilfevereinbarung Nr. 965328 finanziert.
 
-== Hintergrund
+=== Hintergrund
 Weltweit gehören Neugeborene und insbesondere Frühgeborene zu den Patientengruppen mit der höchsten Inzidenz nosokomialer Infektionen. Einige dieser Infektionen können durch infektionspräventive Maßnahmen verhindert werden, die auf jeder einzelnen Neugeborenenstation umgesetzt und an die spezifischen Infektionsrisiken der Patienten angepasst werden müssen. In vielen Krankenhäusern in Europa und weltweit verfügen Ärzte und Pflegekräfte nicht über gute Daten, um die Krankheitslast durch nosokomiale Infektionen und die zu ihrer Entwicklung beitragenden Risikofaktoren einzuschätzen oder die Wirksamkeit von Maßnahmen zur Infektionsprävention zu bewerten. Unterstützung für die Surveillance von nosokomialen Infektionen bei Neugeborenen oder Referenzdaten für Benchmarking sind in den meisten Ländern nicht verfügbar. Wo nationale und supranationale Datenerhebungssysteme existieren, haben sie häufig einen breiten Ansatz, der nur begrenzt in der Lage ist, die Situation in Bezug auf Infektionsprävention und -kontrolle zu beurteilen. Kurzfristig versuchen wir, diese Situation zu verbessern, indem wir Menschen, die an IPC-Surveillance in der Neonatologie interessiert sind, Werkzeuge und Methoden für den Einstieg zur Verfügung stellen um möglicherweise langfristig zur Bildung regionaler Surveillance-Infrastrukturen beitragen.
 
 [#participation_requirements]
-== Hinweise zur Nutzung und Teilnahmevoraussetzungen
+=== Hinweise zur Nutzung und Teilnahmevoraussetzungen
 Wenn Sie mit der Erfassung von Daten mithilfe der NeoIPC Surveillance-Methoden und -Werkzeuge beginnen möchten, können Sie dies einfach tun, ohne uns um Erlaubnis zu fragen oder Gebühren zu zahlen. Alle Handbücher und Tools können kostenlos verwendet werden, und Sie können sie sofort verwenden, wenn Sie der Meinung sind, dass sie zur Qualitätsverbesserung der Infektionsprävention in Ihrer Abteilung beitragen.
 
 Indem Sie mit Papierformularen beginnen und Berechnungen mit Stift und Papier oder mit einer Tabellenkalkulation durchführen, haben Sie eine sehr niedrige Eintrittsbarriere, und es kann Ihnen sogar helfen, ein gründliches Verständnis der Berechnungen zu erlangen, die intern von den fortgeschritteneren Tools durchgeführt werden. Wenn Sie die Dinge über einen längeren Zeitraum effektiv am Laufen halten möchten und über die erforderlichen Ressourcen verfügen, möchten Sie möglicherweise von der Verwendung der fortschrittlicheren Surveilance-Software vor Ort profitieren oder sich an NeoIPC oder einem regionalen Surveilance-Netzwerk auf der Grundlage seiner Methoden beteiligen.
@@ -53,14 +53,14 @@ Wir stellen sicher, dass die von den einzelnen Abteilungen übermittelten disagg
 
 Um Sie bei der Anwendung der bereitgestellten Werkzeuge und Methoden zu unterstützen, bieten wir unter https://neoipc.org/surveillance/ Surveillance-Protokolle und Schulungsmaterialien an. Obwohl unsere Ressourcen für die persönliche Interaktion begrenzt sind, werden wir auch versuchen, Ihr Team zu unterstützen, wenn Sie Ihre Fragen an surveillance@neoipc.org senden.
 
-= Datenmanagement
-== Datenschutz und -sicherheit
+== Datenmanagement
+=== Datenschutz und -sicherheit
 Die routinemäßige Surveillance nosokomialer Infektionen ist keine Forschung, sondern eine Art der Qualitätssicherung, die Teil der regulären Patientenversorgung ist. Aus diesem Grund ist die damit verbundene Datenerhebung in der Regel durch die regulären Krankenhausbehandlungsverträge oder spezielle Gesetze abgedeckt, die dies vorschreiben, und bedarf keiner ausdrücklichen Zustimmung der betroffenen Patienten oder ihrer Erziehungsberechtigten. Dennoch sollten Sie sich vergewissern, dass dies in Ihrem Land gilt, bevor Sie mit der Datenerhebung beginnen, und sich darüber hinaus an einige universelle Mindeststandards halten, die unabhängig von den gesetzlichen Rahmenbedingungen gelten sollten.
 
-=== Patienteninformationen
+==== Patienteninformationen
 Gesundheitsinformationen gehören in den meisten Kulturen zu den vertraulichsten Kategorien von Informationen über Menschen und sollten mit besonderer Sorgfalt behandelt werden. Wenn Informationen gespeichert oder übermittelt werden, die zur Identifizierung eines einzelnen Patienten führen können, sollte dies grundsätzlich so geschehen, dass kein unbefugter Dritter darauf zugreifen kann. Während dies bei typischen menschlichen Identifikatoren wie der Kombination aus Familienname, Vorname und Geburtsdatum meist sehr klar ist, kann bei Neugeborenen auch ein sehr seltenes Geburtsgewicht oder Gestationsalter zur Identifizierung eines individuellen Patienten führen wenn es mit genügend anderen Informationen, wie dem Geburtsdatum oder dem Krankenhaus, in dem der Patient behandelt wird, verknüpft wird. Denken Sie an dieses besondere Phänomen, wenn Sie Daten oder Informationen veröffentlichen, die aus Ihren Surveillance-bezogenen Aktivitäten resultieren, oder sie an ein System übermitteln, das nicht von Ihrem Krankenhaus zugelassen ist. Dies kann sogar für eine extern gewartete NeoIPC-Überwachungssoftware gelten, sofern keine Verträge bestehen, welche die Datenverarbeitung regeln.
 
-=== Krankenhausinformationen
+==== Krankenhausinformationen
 Informationen über Krankenhäuser sind im Allgemeinen nicht gesetzlich geschützt, aber einige Informationen können als Betriebsgeheimnis betrachtet werden und in diesem Fall dürfen Sie sie als Mitarbeiter normalerweise nicht offenlegen. Ob Surveillance-Informationen („Krankenhausinfektionsraten“) ein Betriebsgeheimnis sind oder sein sollten, ist Gegenstand umfangreicher Debatten und es ist verständlich, dass Patientenrechtsorganisationen diesbezüglich für Transparenz plädieren. Dennoch kann die Veröffentlichung von Surveillance-Daten sowohl die Wahrnehmung der Behandlungsqualität eines Krankenhauses als auch die Fähigkeit des Surveillance-Teams, die Surveillance ehrlich und selbstkritisch durchzuführen, nachteilig beeinflussen.
 
 Als Instrument der internen Qualitätssicherung kann die Surveillance nicht alle Formen von Subjektivität und Unehrlichkeit ausschließen, und öffentlicher Druck tendiert dazu, die Datenerhebung in Richtung einer übermäßig kritischen Bewertung von Infektionsaufzeichnungen zu verlagern, was zu niedrigen Raten führt, die nicht mehr zu Verbesserung von Behandlungsqualität genutzt werden können. Neben diesem Problem der "pro forma Surveillance" kann es durchaus legitime oder sogar ehrenwerte Gründe für hohe Infektionsraten in einem Krankenhaus geben, wie etwa die Behandlung von Patienten mit besonders hohem Infektionsrisiko, die mit einfachen statistischen Mitteln wie der Risiko-Standardisierung und -Stratifizierung nicht kompensiert werden können. Solche Zusammenhänge sind der Öffentlichkeit bekanntermaßen schwer zu vermitteln, was zu einer übermäßigen Vereinfachung und politischem Missbrauch führen kann.
@@ -69,7 +69,7 @@ Da es für diese Probleme keine einfache Lösung gibt, wird NeoIPC die Identitä
 
 Wenn Sie Daten selbst oder als regionales Netzwerk veröffentlichen, sollten Sie die möglichen Auswirkungen der Aufnahme von Informationen auf Krankenhausebene sorgfältig prüfen und dies in enger Abstimmung mit den verschiedenen Interessensgruppen tun.
 
-== Datenübermittlung
+=== Datenübermittlung
 Wie xref:participation_requirements[oben] erwähnt, können Sie die vom NeoIPC-Projekt entwickelten Werkzeuge und Methoden verwenden, um die Surveillance nosokomialer Infektionen in Ihrer neonatologischen Abteilung durchzuführen, ohne Informationen an das NeoIPC-Projekt oder ein regionales Netzwerk zu übermitteln.
 
 Wenn Sie sich jedoch für die Übermittlung von Daten entscheiden, empfehlen wir Ihnen dringend, das webbasierte Datenerfassungssystem zu verwenden, das wir auf der Grundlage des https://dhis2.org/[DHIS2-Systems] entwickelt haben.
@@ -82,3 +82,83 @@ Wenn die DHIS2-Plattform aufgrund technischer Probleme vorübergehend nicht verf
 
 .Entscheidungsbaum zur Identifikation einzuschließender Kinder für das Kernmodul
 image::NeoIPC-Core-Decision-Flow.de.svg[Case eligibility decision flow,{full-width},opts=inline]
+
+.Beispiele für Säuglinge, die für das Kernmodul in Frage kommen/nicht in Frage kommen, sobald sie auf der Station aufgenommen wurden
+[cols=">2,>3,>4,>4",stripes=odd]
+|===
+|Lebenstag |Geburtsgewicht (Gramm) |Gestationsalter (Wochen+Tage) |Einschluss im Kernmodul
+
+|120 [.green]#☑# |1499 [.green]#☑# |31+6 [.green]#☑# |Ja [.green]#☑#
+|1 [.green]#☑# |1500 [.red]#☐# |31+6 [.green]#☑# |Ja [.green]#☑#
+|120 [.green]#☑# |1499 [.green]#☑# |32+0 [.red]#☐# |Ja [.green]#☑#
+|1 [.green]#☑# |1500 [.red]#☐# |32+0 [.red]#☐# |Nein [.red]#☐#
+|121 [.red]#☐# |1499 [.green]#☑# |30+5 [.green]#☑# |Nein [.red]#☐#
+|===
+
+Ein Kind, das im Kernmodul nicht berücksichtigt wird, kann dennoch in einem anderen NeoIPC-Überwachungsmodul berücksichtigt werden.
+
+=== Erfassung von Patientendaten
+
+Sobald ein in Frage kommender Patient auf einer der Stationen Ihrer neonatologischen Abteilung aufgenommen oder wieder aufgenommen wird, sollten Sie diesen Patienten erfassen, vorzugsweise direkt auf der DHIS2-Plattform.
+
+==== Pseudonymisierungstabelle
+
+Wenn Sie aus rechtlichen oder anderen Gründen verpflichtet sind, Patienten in der DHIS2-Plattform eindeutig zu identifizieren, müssen Sie jedem Patienten zum Zeitpunkt der Anmeldung eine NeoIPC-ID zuweisen.
+Die NeoIPC-ID ist ein eindeutiger, zufälliger Identifikator, mit dem Sie den Patienten innerhalb Ihrer Abteilung identifizieren können.
+Dies ermöglicht es Ihnen, die im System gespeicherten anonymen Daten zu nutzen, um sich auf bestimmte Patienten zu beziehen, z. B. im Falle einer Wiederaufnahme oder Datenkorrektur, und macht es Dritten unmöglich, dasselbe zu tun.
+
+Jeder Patient kann nur eine NeoIPC-Identifikationsnummer haben.
+Wenn ein Patient entlassen und dann wieder aufgenommen wird, endet die anfängliche Nachverfolgung zum Zeitpunkt der Entlassung, und es muss eine neue Anmeldung unter Verwendung derselben NeoIPC-Identifikationsnummer vorgenommen werden, wenn der Patient wieder aufgenommen wird.
+
+Sie sind für die Organisation des Abrufs von Patientendaten auf der Grundlage eindeutiger IDs verantwortlich.
+Wir empfehlen Ihnen, eine Pseudonymisierungsliste zu erstellen, die die NeoIPC-ID (eindeutige Zufallszahlen) zusammen mit anderen identifizierenden Informationen (Name, Geburtsdatum, Patienten-ID aus dem Krankenhausinformationssystem) enthält, oder diese Informationen auf dem papierbasierten Patientenüberwachungs-Stammdatenblatt zu vermerken.
+Sie müssen die Pseudonymisierungsliste und die Papierblätter unter denselben Bedingungen aufbewahren, unter denen Sie geheime Gesundheitsdaten von Patienten aufbewahren, und sie oder die darin enthaltenen Informationen auf sichere Weise vernichten, sobald sie nicht mehr benötigt werden.
+Um den Datenschutz zu gewährleisten, sollten Sie bei der Erstellung der NeoIPC-ID niemals einen Identifikator verwenden, der in einem anderen Kontext als der NeoIPC-Surveillance verwendet wird und den Sie nicht vollständig kontrollieren können (verwenden Sie z. B. **nicht** die Patienten-ID aus Ihrem Krankenhausinformationssystem, den Patientennamen oder einen eindeutigen Identifikator, der anderswo verwendet wird).
+
+Für die Erstellung von Referenzdaten muss NeoIPC die einzelnen Patienten nicht nachverfolgen und die von Ihnen vergebenen IDs werden von NeoIPC in keiner Weise verwendet.
+
+HINWEIS: Für die Erstellung einer Pseudonymisierungsliste können Sie die Vorlagen (Excel-Tabelle und Papierdatenblatt) verwenden, die Sie auf unserer Website im https://neoipc.org/surveillance/resources/[Abschnitt Ressourcen] finden.
+
+.Beispiel einer Pseudonymisierungsliste
+[cols=">1,^2,^2,^3,^2,^4",stripes=odd]
+|===
+|Nr. |NeoIPC-ID |Patienten-ID |Patientenname |Geburtsdatum |Kommentare
+
+|1 | | | | |
+|2 | | | | |
+|3 | | | | |
+|... | | | | |
+|===
+
+<<<
+==== Stammblatt zur Datenerfassung
+
+Sobald ein in Frage kommender Patient in Ihrer neonatologischen Abteilung aufgenommen oder wieder aufgenommen wird, sollten Sie diesen Patienten erfassen, vorzugsweise direkt in der DHIS2-Plattform.
+Nachdem Sie einen Patienten erfasst haben, müssen Sie die Aufnahmedaten eingeben und die Verlaufsdaten mit Hilfe von Patientenakten weiter erfassen.
+Wenn der Patient entlassen wird, in ein anderes Krankenhaus verlegt wird oder stirbt, müssen Sie die Nachbeobachtung für diesen Patienten beenden, und die Summen der Daten in den Verlaufsdiagrammen sind die Enddaten der Surveillance des Patienten.
+
+Sie können das Stammblatt zur Datenerfassung verwenden, um die Daten zur Erfassung, Aufnahme und zum Ende der Surveillance lokal zu speichern.
+Wenn Sie jedoch Daten an NeoIPC übermitteln, müssen die Informationen, die Sie auf dem Stammblatt zur Datenerfassung erfassen, letztendlich in die DHIS2-Plattform eingegeben werden.
+
+.Stammblatt zur Datenerfassung für Patientendaten
+//image::NeoIPC-Core-Master-Data-Collection-Sheet-Image.svg[Master data collection sheet for patient data collection,{full-width},pdfwidth=75%,opts=inline,align="center"]
+image::NeoIPC-Core-Master-Data-Collection-Sheet-Image.png[Master data collection sheet for patient data collection,{full-width},pdfwidth=75%,align="center"]
+
+<<<
+==== Patientenverlaufsbogen
+
+Eingeschlossene Patienten, die für das System in Frage kommen, müssen bis zu ihrem Tod, ihrer Verlegung oder ihrer Entlassung mit Hilfe von Patientenverlaufsbögen nachverfolgt werden.
+Darin werden kumulative Risiko- und Schutzfaktoren wie Patiententage, Device-Tage und Antibiotika-Tage erfasst, und zwar möglichst täglich.
+Dieser Bogen muss in Ihrer Einrichtung aufbewahrt werden, um die Datenerfassung und die Nachverfolgung der Patienten zu vereinfachen.
+Sie müssen während des Überwachungszeitraums für jedes eingeschlossenen Kind einem oder mehrere Verlaufsbögen führen.
+Es ist möglich, bis zu sechs verschiedene Antibiotika in einer Karte einzutragen.
+Wenn Ihr Patient mehr als sechs verschiedene Antibiotika erhalten hat, dokumentieren Sie diese bitte auf einem zusätzlichen Bogen.
+
+Wenn ein Patient entlassen wird, in ein anderes Krankenhaus verlegt wird oder verstirbt, müssen Sie die Nachbeobachtung für diesen Patienten beenden, und die Summe der Daten in den Verlaufsbögen des Patienten wird zu den Enddaten der Surveillance des Patienten.
+Diese Daten müssen schließlich in die DHIS2-Plattform unter dem Ereignis "Surveillance-Ende" eingegeben werden.
+Sie können das Stammblatt zur Datenerfassung verwenden, um diese Daten lokal zu speichern.
+
+Der Einfachheit halber gelten Patienten, die ihre Abteilung für bis zu zwei Tage verlassen (z. B. für eine Operation), nicht als verlegt oder entlassen.
+Sie sollten die Daten für die Tage, die nicht in der Abteilung verbracht wurden, bei der Wiederaufnahme erfassen.
+Wenn zwischen Verlegung und Wiederaufnahme mehr als 48 Stunden liegen, müssen Sie die Datenerfassung für diesen Patienten beenden und "Verlegung" als Grund für das Ende der Surveillance angeben.
+In diesem Fall ist jede Wiederaufnahme als Neuaufnahme zu erfassen, und als Art der Aufnahme ist "Verlegung in Ihr Zentrum ≥ 24 Stunden nach der Geburt" zu wählen.
