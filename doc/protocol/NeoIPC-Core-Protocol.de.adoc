@@ -72,13 +72,17 @@ Wenn Sie Daten selbst oder als regionales Netzwerk veröffentlichen, sollten Sie
 === Datenübermittlung
 Wie xref:participation_requirements[oben] erwähnt, können Sie die vom NeoIPC-Projekt entwickelten Werkzeuge und Methoden verwenden, um die Surveillance nosokomialer Infektionen in Ihrer neonatologischen Abteilung durchzuführen, ohne Informationen an das NeoIPC-Projekt oder ein regionales Netzwerk zu übermitteln.
 
-Wenn Sie sich jedoch für die Übermittlung von Daten entscheiden, empfehlen wir Ihnen dringend, das webbasierte Datenerfassungssystem zu verwenden, das wir auf der Grundlage des https://dhis2.org/[DHIS2-Systems] entwickelt haben.
+Wenn Sie sich jedoch entschließen, Daten zu übermitteln, empfehlen wir Ihnen dringend, das webbasierte Meldesystem zu verwenden, das wir auf der Grundlage des Gesundheitsinformationsmanagementsystems https://dhis2.org/[DHIS2] entwickelt haben.
 
-Diese Plattform können Sie sowohl für das interne Datenmanagement als auch für den Datenaustausch mit NeoIPC oder Ihrem regionalen Netzwerk nutzen. Darüber hinaus können Sie jederzeit Berichte für Ihre Abteilung erstellen und diese mit den jährlich erscheinenden NeoIPC-Referenzberichten vergleichen.
+Da DHIS2 ein frei verfügbares Open-Source-System ist, haben Sie mehrere Möglichkeiten, es zu nutzen:
 
-Zur Erstellung der Referenzdaten führen wir jedes Jahr zu einem festgelegten Zeitpunkt eine Berechnung anhand der zu diesem Zeitpunkt in der NeoIPC-Datenbank vorhandenen Daten durch. Um dies zu ermöglichen, müssen Sie alle Dateneingaben und Ergänzungen fehlender Informationen des Vorjahres innerhalb von 6 Wochen nach Ende eines Kalenderjahres abgeschlossen haben. Dies gilt für Patienten, deren Surveillance-Zeitraum im Vorjahr endete.
+* Sie können es lokal in Ihrem Krankenhaus einsetzen und es für die NeoIPC-Datenerfassung innerhalb Ihres Krankenhauses sowie für andere potenzielle Anwendungsfälle nutzen.
+* Sie können es auf nationaler oder regionaler Ebene einsetzen (oder ein bestehendes nationales oder regionales System nutzen), um ein nationales oder regionales Netz von Abteilungen zu bilden, die Surveillance betreiben.
+* Sie nutzen die https://neoipc.charite.de/[Instanz] des NeoIPC-Projekts, die derzeit vom Team des deutschen Nationalen Referenzzentrums für Surveillance von nosokomialen Infektionen am Institut für Hygiene und Umweltmedizin der Charité betrieben wird.
 
-Wenn die DHIS2-Plattform aufgrund technischer Probleme vorübergehend nicht verfügbar ist, verwenden Sie in diesem Zeitraum bitte die papierbasierten Datenblätter zur Dokumentation. Bitte denken Sie daran, diese Daten so bald wie möglich in die Webplattform einzugeben, sobald diese wieder verfügbar ist.
+Einer der Vorteile des webbasierten Erfassungssystems ist die Tatsache, dass Sie damit jederzeit mit wenigen Klicks standardisierte, abteilungsbezogene Auswertungen erstellen und diese mit den jährlich erscheinenden NeoIPC-Referenzberichten vergleichen können.
+
+Sollte das webbasierte Erfassungssystem vorübergehend nicht verfügbar sein (z. B. aufgrund von Wartungsarbeiten oder technischen Problemen), verwenden Sie in dieser Zeit bitte die Datenblätter in Papierform zur Dokumentation und denken Sie daran, diese Daten so schnell wie möglich in die Webplattform einzugeben, sobald diese wieder verfügbar ist.
 
 .Entscheidungsbaum zur Identifikation einzuschließender Kinder für das Kernmodul
 image::NeoIPC-Core-Decision-Flow.de.svg[Case eligibility decision flow,{full-width},opts=inline]
@@ -99,11 +103,11 @@ Ein Kind, das im Kernmodul nicht berücksichtigt wird, kann dennoch in einem and
 
 === Erfassung von Patientendaten
 
-Sobald ein in Frage kommender Patient auf einer der Stationen Ihrer neonatologischen Abteilung aufgenommen oder wieder aufgenommen wird, sollten Sie diesen Patienten erfassen, vorzugsweise direkt auf der DHIS2-Plattform.
+Sobald ein einzuschließender Patient in Ihrer neonatologischen Abteilung aufgenommen oder wieder aufgenommen wird, sollten Sie diesen erfassen, vorzugsweise direkt im Online-Erfassunsgsystem.
 
 ==== Pseudonymisierungstabelle
 
-Wenn Sie aus rechtlichen oder anderen Gründen verpflichtet sind, Patienten in der DHIS2-Plattform eindeutig zu identifizieren, müssen Sie jedem Patienten zum Zeitpunkt der Anmeldung eine NeoIPC-ID zuweisen.
+Wenn Sie aus rechtlichen oder anderen Gründen verpflichtet sind, Patienten im Online-Erfassungssystem eindeutig zu identifizieren, müssen Sie jedem Patienten zum Zeitpunkt der Anmeldung eine NeoIPC-ID zuweisen.
 Die NeoIPC-ID ist ein eindeutiger, zufälliger Identifikator, mit dem Sie den Patienten innerhalb Ihrer Abteilung identifizieren können.
 Dies ermöglicht es Ihnen, die im System gespeicherten anonymen Daten zu nutzen, um sich auf bestimmte Patienten zu beziehen, z. B. im Falle einer Wiederaufnahme oder Datenkorrektur, und macht es Dritten unmöglich, dasselbe zu tun.
 
@@ -117,7 +121,7 @@ Um den Datenschutz zu gewährleisten, sollten Sie bei der Erstellung der NeoIPC-
 
 Für die Erstellung von Referenzdaten muss NeoIPC die einzelnen Patienten nicht nachverfolgen und die von Ihnen vergebenen IDs werden von NeoIPC in keiner Weise verwendet.
 
-HINWEIS: Für die Erstellung einer Pseudonymisierungsliste können Sie die Vorlagen (Excel-Tabelle und Papierdatenblatt) verwenden, die Sie auf unserer Website im https://neoipc.org/surveillance/resources/[Abschnitt Ressourcen] finden.
+NOTE: Für die Erstellung einer Pseudonymisierungsliste können Sie die Vorlagen (Excel-Tabelle und Papierdatenblatt) verwenden, die Sie auf unserer Website im https://neoipc.org/surveillance/resources/[Abschnitt Ressourcen] finden.
 
 .Beispiel einer Pseudonymisierungsliste
 [cols=">1,^2,^2,^3,^2,^4",stripes=odd]
@@ -133,18 +137,19 @@ HINWEIS: Für die Erstellung einer Pseudonymisierungsliste können Sie die Vorla
 <<<
 ==== Stammblatt zur Datenerfassung
 
-Sobald ein in Frage kommender Patient in Ihrer neonatologischen Abteilung aufgenommen oder wieder aufgenommen wird, sollten Sie diesen Patienten erfassen, vorzugsweise direkt in der DHIS2-Plattform.
-Nachdem Sie einen Patienten erfasst haben, müssen Sie die Aufnahmedaten eingeben und die Verlaufsdaten mit Hilfe von Patientenakten weiter erfassen.
-Wenn der Patient entlassen wird, in ein anderes Krankenhaus verlegt wird oder stirbt, müssen Sie die Nachbeobachtung für diesen Patienten beenden, und die Summen der Daten in den Verlaufsdiagrammen sind die Enddaten der Surveillance des Patienten.
+Sobald ein einzuschließender Patient in Ihrer neonatologischen Abteilung aufgenommen oder wieder aufgenommen wird, sollten Sie diesen erfassen, vorzugsweise direkt im Online-Erfassunsgsystem.
+Nachdem Sie einen Patienten eingeschlossen haben, müssen Sie die Aufnahmedaten eingeben und die Verlaufsdaten mit Hilfe von Patientenakten weiter erfassen.
+Wenn der Patient entlassen wird, in ein anderes Krankenhaus verlegt wird oder stirbt, müssen Sie die Nachbeobachtung für diesen Patienten beenden, die Summen der in den Patientenverlaufsbogen erfassten Daten bilden und diese ins Stammblatt übertragen oder direkt ins Online-Erfassungssystem eingeben.
 
 Sie können das Stammblatt zur Datenerfassung verwenden, um die Daten zur Erfassung, Aufnahme und zum Ende der Surveillance lokal zu speichern.
-Wenn Sie jedoch Daten an NeoIPC übermitteln, müssen die Informationen, die Sie auf dem Stammblatt zur Datenerfassung erfassen, letztendlich in die DHIS2-Plattform eingegeben werden.
+Wenn Sie jedoch Daten an NeoIPC übermitteln, müssen die Informationen, die Sie auf dem Stammblatt zur Datenerfassung erfassen, letztendlich ins Online-Erfassungssystem eingegeben werden.
 
 .Stammblatt zur Datenerfassung für Patientendaten
-//image::NeoIPC-Core-Master-Data-Collection-Sheet-Image.svg[Master data collection sheet for patient data collection,{full-width},pdfwidth=75%,opts=inline,align="center"]
-image::NeoIPC-Core-Master-Data-Collection-Sheet-Image.png[Master data collection sheet for patient data collection,{full-width},pdfwidth=75%,align="center"]
+//image::NeoIPC-Core-Master-Data-Collection-Sheet-Image.svg[Stammblatt für die Erfassung von Patientendaten,{full-width},pdfwidth=75%,opts=inline,align="center"]
+image::NeoIPC-Core-Master-Data-Collection-Sheet-Image.png[Stammblatt für die Erfassung von Patientendaten,{full-width},pdfwidth=75%,align="center"]
 
 <<<
+[patient-progress-chart]
 ==== Patientenverlaufsbogen
 
 Eingeschlossene Patienten, die für das System in Frage kommen, müssen bis zu ihrem Tod, ihrer Verlegung oder ihrer Entlassung mit Hilfe von Patientenverlaufsbögen nachverfolgt werden.
@@ -155,10 +160,56 @@ Es ist möglich, bis zu sechs verschiedene Antibiotika in einer Karte einzutrage
 Wenn Ihr Patient mehr als sechs verschiedene Antibiotika erhalten hat, dokumentieren Sie diese bitte auf einem zusätzlichen Bogen.
 
 Wenn ein Patient entlassen wird, in ein anderes Krankenhaus verlegt wird oder verstirbt, müssen Sie die Nachbeobachtung für diesen Patienten beenden, und die Summe der Daten in den Verlaufsbögen des Patienten wird zu den Enddaten der Surveillance des Patienten.
-Diese Daten müssen schließlich in die DHIS2-Plattform unter dem Ereignis "Surveillance-Ende" eingegeben werden.
+Diese Daten müssen schließlich unter dem Ereignis "Surveillance-Ende" ins Online-Erfassungssystem eingegeben werden.
 Sie können das Stammblatt zur Datenerfassung verwenden, um diese Daten lokal zu speichern.
 
 Der Einfachheit halber gelten Patienten, die ihre Abteilung für bis zu zwei Tage verlassen (z. B. für eine Operation), nicht als verlegt oder entlassen.
 Sie sollten die Daten für die Tage, die nicht in der Abteilung verbracht wurden, bei der Wiederaufnahme erfassen.
 Wenn zwischen Verlegung und Wiederaufnahme mehr als 48 Stunden liegen, müssen Sie die Datenerfassung für diesen Patienten beenden und "Verlegung" als Grund für das Ende der Surveillance angeben.
 In diesem Fall ist jede Wiederaufnahme als Neuaufnahme zu erfassen, und als Art der Aufnahme ist "Verlegung in Ihr Zentrum ≥ 24 Stunden nach der Geburt" zu wählen.
+
+.Verlaufsbogen für die Erfassung von Patientendaten
+//image::NeoIPC-Core-Patient-Progress-Chart-Image.svg[Verlaufsbogen für die Erfassung von Patientendaten,{full-width},pdfwidth=100%,opts=inline,align="center"]
+image::NeoIPC-Core-Patient-Progress-Chart-Image.png[Verlaufsbogen für die Erfassung von Patientendaten,{full-width},pdfwidth=100%,align="center"]
+
+<<<
+=== Datenerhebung zu chirurgischen Eingriffen
+
+Jeder chirurgische Eingriff bei Neugeborenen und insbesondere bei VLBW/VPT-Säuglingen ist ein Indikator für einen komplizierten Verlauf und ein zusätzlicher Risikofaktor für nosokomiale Infektionen und das Auftreten von multiresistenten Erregern.
+Aus diesem Grund wird jeder chirurgische Eingriff, der an einem eingeschlossenen Neugeborenen vorgenommen wird, in NeoIPC erfasst.
+Für die Dokumentation vor Ort können Sie den Erhebungsbogen für chirurgische Eingriffe verwenden oder die entsprechenden Informationen direkt in das Online-Erfassungssystem eingeben.
+Zusätzlich zur Erfassung des Eingriffs müssen Sie das betreffende Kind 30 oder 90 Tage lang auf Wundinfektionen überwachen, je nachdem, ob während des Eingriffs ein Implantat belassen wurde.
+
+.Erhebungsbogen für chirurgische Eingriffe
+//image::NeoIPC-Core-Surgical-Procedure-Data-Collection-Sheet-Image.svg[Erhebungsbogen für chirurgische Eingriffe,{full-width},pdfwidth=75%,opts=inline,align="center"]
+image::NeoIPC-Core-Surgical-Procedure-Data-Collection-Sheet-Image.png[Erhebungsbogen für chirurgische Eingriffe,{full-width},pdfwidth=75%,align="center"]
+
+=== Erhebung von Infektionsdaten
+
+Im Krankenhaus erworbene Blutstrominfektionen, Lungenentzündungen, NEC-Fälle und postoperative Wundinfektionen sollten bei allen eingeschlossenen Patienten bis zum Ende des Surveillance-Zeitraums dokumentiert werden.
+
+Neugeboreneninfektionen lassen sich grob in Früh- und Spätinfektionen (early- und late-onset) unterteilen.
+Die meisten Frühinfektionen sind auf schwangerschafts- und geburtsbedingte Risiken zurückzuführen, bei denen die verursachenden Erreger typischerweise die Mutter in Form einer mikrobiellen Kolonisation oder Infektion befallen, bevor sie eine Infektion beim Kind verursachen.
+Die meisten Spätinfektionen sind dagegen auf nosokomiale Infektionen zurückzuführen, und die Erreger dieser Infektionen stammen in der Regel von Personen oder unbelebten Oberflächen, die während der Neugeborenenversorgung in engen Kontakt mit dem Kind kommen.
+Da nur letztere für das auf neonatologischen Stationen tätige Gesundheitspersonal unmittelbar handlungsrelevant sind, legt NeoIPC den Schwerpunkt auf diese "nosokomialen" Spätinfektionen, versucht aber auch, Sie bei der Surveillance von Frühinfektionen zu unterstützen.
+Obwohl ein fester zeitbasierter Cut-off-Wert nicht genau erfasst, ob eine Infektion auf der Neugeborenen-Intensivstation erworben wurde, besteht ein relativ breiter internationaler Konsens darüber, dass ein 72-Stunden-Cut-off-Wert als guter Schätzer für nosokomiale Infektionen in der Neonatologie dient.
+Aus diesem Grund sollten Infektionen, bei denen die ersten Symptome innerhalb eines 72-Stunden-Fensters nach der Geburt auftreten, nicht als nosokomiale Infektionen gelten und daher nicht im NeoIPC-Kernmodul erfasst werden.
+Es ist jedoch möglich, sie separat als Frühinfektionen zu erfassen, wenn Sie sich für das NeoIPC-Modul für Frühinfektionen entscheiden.
+Wenn eine Infektion vor 72 Stunden beginnt und eindeutig im Krankenhaus erworben wurde (z. B. weil es deutliche Anzeichen einer Infektion an der Kathetereintrittsstelle gibt) oder nach 72 Stunden beginnt und eindeutig vertikal ist (z. B. alle transplazentaren Infektionen, die bei der Geburt nicht erkennbar sind, wie Toxoplasmose, CMV, HIV, Röteln und Syphilis), kann dieser Cut-off-Wert ignoriert werden.
+
+Für Patienten, die auf eine Station in Ihrer neonatologischen Abteilung verlegt oder wieder aufgenommen werden, muss ein zusätzlicher Grenzwert angewendet werden.
+In diesem Fall gilt eine Infektion nur dann als nosokomiale Infektion, wenn der Tag des Symptombeginns größer oder gleich dem dritten Tag des Krankenhausaufenthalts des Patienten ist, wobei der Tag der Aufnahme als Tag 1 gilt.
+
+Die NeoIPC Surveillance sieht keinen strikten Zeitrahmen für das Auftreten von Elementen der Definitionen vor, aber in der Regel treten alle Elemente, die zur Erfüllung einer Infektionsdefinition erforderlich sind, innerhalb eines Zeitrahmens von 7-10 Tagen auf, wobei typischerweise nicht mehr als 2-3 Tage zwischen den einzelnen Elementen liegen.
+
+Wenn ein neuer Erreger in demselben Organsystem isoliert wird, obwohl bereits eine Infektion festgestellt wurde, kann dies nicht als neue Infektion erfasst werden.
+Es sind mindestens 14 Tage und ein Zeitraum ohne relevante Infektionssymptome erforderlich, um die gleiche Art von Infektion erneut zu erfassen.
+
+<<<
+==== Primäre Sepsis/BSI
+
+Wenn bei einem eingeschlossenen Kind während des Surveillance-Zeitraums eine im Krankenhaus erworbene primäre Sepsis/Blutstrominfektion gemäß den NeoIPC-Surveillance-Kriterien (siehe Infektionsdefinitionen: Primäre Sepsis/Blutstrominfektion) auftritt, sollten Sie die erforderlichen Daten mit dem nachstehenden Datenerfassungsbogen erfassen und/oder über die Online-Erfassungsplattform übermitteln.
+
+.Erfassungsbogen für primäre Sepsis/BSI
+//image::NeoIPC-Core-Primary-Sepsis-BSI-Reporting-Sheet-Image.svg[Erfassungsbogen für primäre Sepsis/BSI,{full-width},pdfwidth=75%,opts=inline,align="center"]
+image::NeoIPC-Core-Primary-Sepsis-BSI-Reporting-Sheet-Image.png[Erfassungsbogen für primäre Sepsis/BSI,{full-width},pdfwidth=75%,align="center"]

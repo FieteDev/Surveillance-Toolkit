@@ -98,16 +98,21 @@ When publishing data yourself or as a regional network you should carefully cons
 === Data Submission
 As stated xref:participation_requirements[above], you can use the tools and methods developed by the NeoIPC project to perform surveillance of nosocomial infections in your neonatology department without submitting any information to the NeoIPC project or a regional network.
 
-If you decide to submit data, however, we strongly advise you to use the web-based reporting system we have developed in addition to the https://dhis2.org/[DHIS2 system].
+If you decide to submit data, however, we strongly advise you to use the web-based reporting system we have developed based on the https://dhis2.org/[DHIS2] health information management system.
 
-You can use this platform both for internal data management and for the data exchange with NeoIPC or your regional network.
-Furthermore, you can create unit-based reports at any time and compare them to the NeoIPC reference reports that are published annually.
+Since DHIS2 is a freely available open source system, you have multiple options to use it:
+
+* Deploy it locally at your hospital and use it for the NeoIPC data collection within your hospital as well as for other potential use cases.
+* Deploy it nationally or regionally (or use an existing national or regional deployment) to form a national or regional network of units performing surveillance.
+* Use the NeoIPC project's https://neoipc.charite.de/[instance] of the system which is currently operated by the team at the German National Reference Centre for Surveillance of Nosocomial Infections at Charité's Institute for Hygiene and Environmental Medicine.
+
+One of the advantages of using the web-based reporting system is the fact that you can use it to create standardised unit-based reports at any time with a few clicks and compare them to the NeoIPC reference reports that are published annually.
 
 To create the reference report, we carry out a calculation at a specified time every year using the data available in the NeoIPC database at that point in time.
 In order to make this possible, you must have completed all data entry and addition of missing information from the previous year within 6 weeks after the end of a calendar year.
 This applies to patients whose surveillance period ended in the previous year.
 
-If DHIS2 platform is temporarily unavailable due to technical problems, please use the paper-based datasheets for documentation during this period and remember to enter this data into the web platform as soon as possible once it becomes available again.
+If the web-based reporting system is temporarily unavailable (e. g. due to maintenance or technical problems), please use the paper-based datasheets for documentation during this period and remember to enter this data into the web platform as soon as possible once it becomes available again.
 
 == Data Collection
 The primary aim of the methods used by NeoIPC surveillance system is to support internal quality assurance standards, to make valid statements about the frequency of healthcare-associated infections in eligible infants during their inpatient stay and to promote implementation of IPC strategies in a neonatal unit.
@@ -171,11 +176,11 @@ An infant that is not eligible in the core module may still be eligible in anoth
 
 === Patient Data Collection
 
-Whenever an eligible patient is admitted or readmitted to one of the wards in your neonatology department, you should enrol this patient, preferably directly into the DHIS2 platform.
+Whenever an eligible patient is admitted or readmitted to one of the wards in your neonatology department, you should enrol this patient, preferably directly into the online reporting platform.
 
 ==== Pseudonymisation Table
 
-If you have a legal or other requirement to unambiguously identify patients in the DHIS2 platform, you must assign each patient a NeoIPC-ID at the time of enrolment.
+If you have a legal or other requirement to unambiguously identify patients in the online reporting platform, you must assign each patient a NeoIPC-ID at the time of enrolment.
 The NeoIPC-ID is a unique random identifier, which allows you to identify that patient within your department.
 This makes it possible for you to use the anonymous data stored in the system to refer to specific patients, e.g. in case of readmission or data correction, but makes it impossible for third parties to do the same.
 
@@ -205,18 +210,19 @@ NOTE: To create a pseudonymisation list you can use the templates (excel spreads
 <<<
 ==== Master Data Collection Sheet
 
-Whenever an eligible patient is admitted or readmitted in your neonatology department, you should enrol this patient, preferably directly into the DHIS2 platform.
+Whenever an eligible patient is admitted or readmitted in your neonatology department, you should enrol this patient, preferably directly into the online reporting platform.
 After enrolling a patient, you must enter admission information and keep collecting the follow-up data using patient progress charts.
-When the patient is discharged, transferred to another hospital, or dies, you need to end the follow-up for that patient and the sum data in the patient progress charts will be the patient's surveillance end data.
+When the patient is discharged, transferred to another hospital or dies, you must end the follow-up for this patient, total the data recorded in the xref:patient-progress-chart[patient progress chart] and transfer it to the master data sheet or enter it directly into the online data entry system.
 
 You can use the master data collection sheet to save enrolment, admission information and surveillance end data locally.
-However, if you submit data to NeoIPC, the information you collect on the master data collection sheet must ultimately be entered into the DHIS2 platform.
+However, if you submit data to NeoIPC, the information you collect on the master data collection sheet must ultimately be entered into the online data entry system.
 
 .Master data collection sheet for patient data collection
 //image::NeoIPC-Core-Master-Data-Collection-Sheet-Image.svg[Master data collection sheet for patient data collection,{full-width},pdfwidth=75%,opts=inline,align="center"]
 image::NeoIPC-Core-Master-Data-Collection-Sheet-Image.png[Master data collection sheet for patient data collection,{full-width},pdfwidth=75%,align="center"]
 
 <<<
+[patient-progress-chart]
 ==== Patient Progress Chart
 
 Eligible patients who have been enrolled in the system must be followed up using patient progress charts until death, transfer, or discharge.
@@ -227,7 +233,7 @@ It is possible to enter up to six different antibiotic substances in one chart.
 If your patient has received more than six types of antibiotics, please use an additional chart to document them.
 
 When a patient is discharged, transferred to another hospital, or dies, you need to end the follow-up for that patient and the sum data in the patient progress charts will be the patient's surveillance end data.
-This data must be ultimately entered into DHIS2 platform under the event “surveillance end”.
+This data must be ultimately entered into the online reporting platform under the event “surveillance end”.
 You can use the master data collection sheet to save this data locally.
 
 For simplicity, patients who leave their department for up to two days (i.e., for surgery) are not considered transferred or discharged.
@@ -275,7 +281,7 @@ A minimum of 14 days and a period without any relevant symptoms of infection are
 <<<
 ==== Primary Sepsis/BSI
 
-If an eligible infant develops a hospital-acquired primary sepsis/bloodstream infection according to the NeoIPC surveillance criteria (see Infection Definitions: Primary sepsis/bloodstream infection) during the surveillance period, you should record and submit the required data using the data collection sheet below and/or via the online reporting platform DHIS2.
+If an eligible infant develops a hospital-acquired primary sepsis/bloodstream infection according to the NeoIPC surveillance criteria (see Infection Definitions: Primary sepsis/bloodstream infection) during the surveillance period, you should record and submit the required data using the data collection sheet below and/or via the online reporting platform.
 
 .Primary sepsis/BSI reporting sheet
 //image::NeoIPC-Core-Primary-Sepsis-BSI-Reporting-Sheet-Image.svg[Primary sepsis/BSI reporting sheet,{full-width},pdfwidth=75%,opts=inline,align="center"]
@@ -284,7 +290,7 @@ image::NeoIPC-Core-Primary-Sepsis-BSI-Reporting-Sheet-Image.png[Primary sepsis/B
 <<<
 ==== Necrotising Enterocolitis
 
-If an eligible infant develops a necrotizing enterocolitis according to the NeoIPC surveillance criteria (see Infection Definitions: Necrotising Enterocolitis (NEC)) during the surveillance period, you should record and submit the required data using the data collection sheet below and/or via the online reporting platform DHIS2.
+If an eligible infant develops a necrotizing enterocolitis according to the NeoIPC surveillance criteria (see Infection Definitions: Necrotising Enterocolitis (NEC)) during the surveillance period, you should record and submit the required data using the data collection sheet below and/or via the online reporting platform.
 
 .NEC reporting sheet
 //image::NeoIPC-Core-NEC-Reporting-Sheet-Image.svg[NEC reporting sheet,{full-width},pdfwidth=75%,opts=inline,align="center"]
@@ -293,7 +299,7 @@ image::NeoIPC-Core-NEC-Reporting-Sheet-Image.png[NEC reporting sheet,{full-width
 <<<
 ==== Pneumonia
 
-If an eligible infant develops a hospital-acquired pneumonia according to the NeoIPC surveillance criteria (see Infection Definitions: Pneumonia) during the surveillance period, you should record and submit the required data using the data collection sheet below and/or via the online reporting platform DHIS2.
+If an eligible infant develops a hospital-acquired pneumonia according to the NeoIPC surveillance criteria (see Infection Definitions: Pneumonia) during the surveillance period, you should record and submit the required data using the data collection sheet below and/or via the online reporting platform.
 
 .Pneumonia reporting sheet
 //image::NeoIPC-Core-Pneumonia-Reporting-Sheet-Image.svg[Pneumonia reporting sheet,{full-width},pdfwidth=75%,opts=inline,align="center"]
@@ -302,7 +308,7 @@ image::NeoIPC-Core-Pneumonia-Reporting-Sheet-Image.png[Pneumonia reporting sheet
 <<<
 ==== Surgical Site Infections
 
-If an eligible infant develops a surgical site infection according to the NeoIPC surveillance criteria (see Definitions: Surgical Site Infection (SSI)) during the surveillance period, you should record and submit the required data using the data collection sheet below and/or via the online reporting platform DHIS2.
+If an eligible infant develops a surgical site infection according to the NeoIPC surveillance criteria (see Definitions: Surgical Site Infection (SSI)) during the surveillance period, you should record and submit the required data using the data collection sheet below and/or via the online reporting platform.
 
 .SSI reporting sheet
 //image::NeoIPC-Core-SSI-Reporting-Sheet-Image.svg[SSI reporting sheet,{full-width},pdfwidth=75%,opts=inline,align="center"]
