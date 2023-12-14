@@ -49,7 +49,8 @@ if ($null -eq $targetCultures)
 {
     $targetCultures = @(
         (new-object CultureInfo("")),
-        (new-object CultureInfo("de"))
+        (new-object CultureInfo("de")),
+        (new-object CultureInfo("es"))
          )
 }
 if ($Release)

@@ -222,7 +222,7 @@ However, if you submit data to NeoIPC, the information you collect on the master
 image::NeoIPC-Core-Master-Data-Collection-Sheet-Image.png[Master data collection sheet for patient data collection,{full-width},pdfwidth=75%,align="center"]
 
 <<<
-[patient-progress-chart]
+[[patient-progress-chart]]
 ==== Patient Progress Chart
 
 Eligible patients who have been enrolled in the system must be followed up using patient progress charts until death, transfer, or discharge.
