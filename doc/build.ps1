@@ -239,7 +239,7 @@ foreach ($targetCulture in $targetCultures)
         Write-Information "Creating Open XML (docx)"
         if (Test-RebuildRequired $buildDir/NeoIPC-Core-Protocol$langSuffix.xml $buildDir/NeoIPC-Core-Protocol$langSuffix.adoc) {
             Write-Verbose "Creating DocBook xml"
-            asciidoctor -a $revRemark -a $revDate --backend docbook --warnings --trace --failure-level WARN --destination-dir $buildDir --out-file NeoIPC-Core-Protocol$langSuffix.xml $buildDir/NeoIPC-Core-Protocol$langSuffix.adoc
+            asciidoctor -a $revRemark -a $revDate -a mathematical-format=svg -r asciidoctor-mathematical --backend docbook --warnings --trace --failure-level WARN --destination-dir $buildDir --out-file NeoIPC-Core-Protocol$langSuffix.xml $buildDir/NeoIPC-Core-Protocol$langSuffix.adoc
         }
         if (Test-RebuildRequired $outDir/img/NeoIPC-Core-Decision-Flow$langSuffix.docx $buildDir/NeoIPC-Core-Decision-Flow$langSuffix.xml @(
             "$buildImgDir/NeoIPC-Core-Decision-Flow$langSuffix.svg",
