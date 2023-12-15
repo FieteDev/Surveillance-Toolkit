@@ -1,3 +1,5 @@
 doc/build
 doc/out
 dhis2/metadata.json
+metadata/metadata.json
+metadata/*.csv
