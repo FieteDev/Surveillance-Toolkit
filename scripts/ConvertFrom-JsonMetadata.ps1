@@ -1,126 +1,245 @@
 [CmdletBinding(PositionalBinding, SupportsShouldProcess)]
 param(
-    [Parameter(Position=0, Mandatory)]
-    [string]$LiteralPath,
+    [Parameter(Position=0)]#, Mandatory)]
+    [string]$LiteralPath = '/home/brar/Downloads/metadata.json',
     [Parameter(Position=1)]
-    [string]$OutputDirectory = (Join-Path -Path (Resolve-Path -LiteralPath (Join-Path -Path $PSScriptRoot -ChildPath '..' -AdditionalChildPath 'metadata') -Relative) -ChildPath (Get-Date -AsUTC -Format FileDateTimeUniversal)),
-    [string[]]$TranslationLanguages = @('de', 'es', 'fr', 'gr', 'it'),
-    [switch]$IncudeIds,
-    [switch]$NoSharing,
-    [switch]$ForExcel
+    [string]$OutputDirectory = (Join-Path -Path (Resolve-Path -LiteralPath (Join-Path -Path $PSScriptRoot -ChildPath '..' -AdditionalChildPath 'metadata') -Relative) -ChildPath (Get-Date -Format FileDateTimeUniversal))
 )
-
-Import-Module -Name (Join-Path -Resolve -Path $PSScriptRoot -ChildPath 'modules' -AdditionalChildPath 'NeoIPC-Tools') -Force -Verbose:$false
-
-# Dev mode
-$ForExcel = $true
-
-if ($ForExcel) {
-    $csvOutputEncoding = 'utf8BOM'
-    $useCultureInCsvOutput = $true
-} else {
-    $csvOutputEncoding = 'utf8NoBOM'
-    $useCultureInCsvOutput = $false
-}
 
 $resolvedPath = Resolve-Path -LiteralPath $LiteralPath -Relative
 
+if ($VerbosePreference -ne 'SilentlyContinue') {
+    $InformationPreference = $VerbosePreference
+}
+
+function Export-ConditionalCsv {
+    param (
+        [Parameter(Position=0,Mandatory,ValueFromPipeline)]
+        $InputObject,
+        [Parameter(Position=1,Mandatory)]
+        [string]$ObjectName
+        )
+    process {
+        if (-not $stream) {
+            if ($_) {
+                $outFile = Join-Path -Path $OutputDirectory -ChildPath "$ObjectName.csv"
+                Write-Verbose "Creating file '$outFile'"
+                $stream = [System.IO.StreamWriter]::new($outFile)
+                $_ | ConvertTo-Csv -UseQuotes AsNeeded | ForEach-Object { $stream.WriteLine($_)}
+            } else {
+                Write-Verbose "Skipping empty $ObjectName object"
+            }
+        } else {
+            $stream.WriteLine(($_ | ConvertTo-Csv -NoHeader -UseQuotes AsNeeded))
+        }
+    }
+    clean {
+        if ($stream) {
+            $stream.Close()
+        }
+    }
+}
+
 Write-Information "Converting JSON metadata from $resolvedPath to CSV in directory $OutputDirectory"
-$metadata = Get-Content -Raw -Path $resolvedPath | ConvertFrom-Json -AsHashtable
-if ($metadata.ContainsKey('users')) {
-    Write-Verbose "Creating user map"
-    $userMap = $metadata['users'] | Get-CodeMap
-}
-if ($metadata.ContainsKey('userRoles')) {
-    Write-Verbose "Creating user role map"
-    $userRoleMap = $metadata['userRoles'] | Get-CodeMap
-}
-if ($metadata.ContainsKey('userGroups')) {
-    Write-Verbose "Creating user group map"
-    $userGroupMap = $metadata['userGroups'] | Get-CodeMap
-}
-$metadata | Get-ChildObject | Foreach-Object {
-    $objectName = $_.Name
-    switch ($objectName) {
-        'apiToken' {
-            Write-Debug "Metadata object '$objectName' is ignored"
-            return
-        }
-        'attributes' {
-            $exportSharing = -not $NoSharing.IsPresent
-            $sortProperties = 'name'
-            $properties = Get-ObjectProperties -ObjectName $objectName -AddIdProperty:$IncudeIds.IsPresent -AddSharingProperties:$exportSharing
-        }
-        'dataElements' {
-            $exportSharing = -not $NoSharing.IsPresent
-            $sortProperties = 'name'
-            $properties = Get-ObjectProperties -ObjectName $objectName -AddIdProperty:$IncudeIds.IsPresent -AddSharingProperties:$exportSharing
-        }
-        'optionSets' {
-            $exportSharing = -not $NoSharing.IsPresent
-            $sortProperties = 'name'
-            $properties = Get-ObjectProperties -ObjectName $objectName -AddIdProperty:$IncudeIds.IsPresent -AddSharingProperties:$exportSharing
-        }
-        Default {
-            Write-Warning "Metadata object '$objectName' is not handled"
-            return #throw "Unnown object: '$objectName'"
-        }
-    }
-    $obj = $_.Value
-    $dir = Initialize-ObjectDirectory -BasePath $OutputDirectory -ObjectNames $objectName
-    Write-Verbose "Exporting $objectName to directory $dir"
-    $file = Join-Path -Path $dir -ChildPath 'data.csv'
-    Write-Verbose "Creating file $file"
-    $obj |
-        Sort-Object -Property $sortProperties |
-        Select-Object -Property $properties |
-        Export-Csv -LiteralPath $file -Encoding $csvOutputEncoding -UseCulture:$useCultureInCsvOutput -UseQuotes AsNeeded
+$metadata = Get-Content -Raw -Path $resolvedPath | ConvertFrom-Json -AsHashtable -DateKind Utc -NoEnumerate
 
-    if ($exportSharing) {
-        Write-Verbose "Exporting group sharing information"
-        $sharingFile = Join-Path -Path $dir -ChildPath 'group_sharings.csv'
-        $csv = $obj |
-            Sort-Object -Property $sortProperties |
-            Select-Object -Property code -ExpandProperty Sharing |
-            Select-Object -Property code -ExpandProperty userGroups |
-            Select-Object -Property code -ExpandProperty values |
-            Select-Object -Property code,@{name='group_code';expression={
-                if ($userGroupMap -and $userGroupMap.Contains($_.id)) {
-                    Write-Debug "Mapping group id '$($_.id)' to code '$($userGroupMap[$_.id])'"
-                    $userGroupMap[$_.id]
-                } else {
-                    Write-Warning "Failed to map a code for the group with the id '$($_.id)'."
-                    $_.id
-                }
-            }},access
-        if ($csv) {
-            Write-Verbose "Creating file $sharingFile"
-            $csv | Export-Csv -LiteralPath $sharingFile -Encoding $csvOutputEncoding -UseCulture:$useCultureInCsvOutput -UseQuotes AsNeeded
-        } else {
-            Write-Verbose "Skipping empty export"
-        }
+Write-Verbose "Creating directory '$OutputDirectory'"
+New-Item -ItemType Directory -Path $OutputDirectory > $null
 
-        Write-Verbose "Exporting user sharing information"
-        $sharingFile = Join-Path -Path $dir -ChildPath 'user_sharings.csv'
-        $csv = $obj |
-            Sort-Object -Property $sortProperties |
-            Select-Object -ExpandProperty Sharing |
-            Select-Object -ExpandProperty users |
-            Select-Object -ExpandProperty values |
-            Select-Object -Property @{name='user_code';expression={
-                if ($userMap -and $userMap.Contains($_.id)) {
-                    Write-Debug "Mapping user id '$($_.id)' to code '$($userMap[$_.id])'"
-                    $userMap[$_.sharing.owner]
-                } else {
-                    Write-Warning "Failed to map a code for the user with the id '$($_.id)'."
-                    $_.id
-                }
-            }},access
-        if ($csv) {
-            Write-Verbose "Creating file $sharingFile"
-            $csv | Export-Csv -LiteralPath $sharingFile -Encoding $csvOutputEncoding -UseCulture:$useCultureInCsvOutput -UseQuotes AsNeeded
-        } else {
-            Write-Verbose "Skipping empty export"
-        }
-    }
+if ($metadata.system)
+{
+    $outFile = Join-Path -Path $OutputDirectory -ChildPath 'system.txt'
+    Write-Verbose "Creating file '$outFile'"
+    [PSCustomObject]$metadata.system |
+        Format-List |
+        Out-String |
+        Set-Content -NoNewline -LiteralPath $outFile
+}
+
+if ($metadata.optionSets)
+{
+    $metadata.optionSets |
+        Sort-Object -Property code |
+        Select-Object -Property id,code,name,valueType |
+        Export-ConditionalCsv -ObjectName optionSets
+}
+
+if ($metadata.programTrackedEntityAttributes) {
+    $metadata.programTrackedEntityAttributes |
+        Sort-Object -Property {$_.program.id},sortOrder |
+        Select-Object -Property @(
+            @{l='program';e={$_.program.id}}
+            @{l='trackedEntityAttribute';e={$_.trackedEntityAttribute.id}}
+            'id'
+            'mandatory'
+            'displayInList'
+            'searchable'
+            'renderOptionsAsRadio'
+            'sortOrder'
+            ) |
+        Export-ConditionalCsv -ObjectName programTrackedEntityAttributes
+}
+
+if ($metadata.options) {
+    $metadata.options |
+        Sort-Object -Property {$_.optionSet.id},sortOrder |
+        Select-Object -Property @{l='optionSet';e={$_.optionSet.id}},id,code,name,sortOrder |
+        Export-ConditionalCsv -ObjectName options
+}
+
+if ($metadata.categories) {
+    $metadata.categories |
+        Where-Object id -NE 'GLevLNI9wkl' |
+        Sort-Object -Property code |
+        Select-Object -Property id,code,name,shortName,dataDimension,dataDimensionType |
+        Export-ConditionalCsv -ObjectName categories
+}
+
+if ($metadata.programStages) {
+    $metadata.programStages |
+        Sort-Object -Property {$_.program.id},sortOrder |
+        Select-Object -Property @(
+            @{l='program';e={$_.program.id}}
+            'id'
+            'name'
+            'description'
+            'executionDateLabel'
+            'repeatable'
+            'sortOrder'
+            'minDaysFromStart'
+            'autoGenerateEvent'
+            'validationStrategy'
+            'displayGenerateEventBox'
+            'blockEntryForm'
+            'preGenerateUID'
+            'remindCompleted'
+            'generatedByEnrollmentDate'
+            'allowGenerateNextVisit'
+            'openAfterEnrollment'
+            'hideDueDate'
+            'enableUserAssignment'
+            'referral'
+            @{l='notificationTemplates';e={$_.notificationTemplates.id | Sort-Object | Join-String -Separator ' '}}
+            ) |
+        Export-ConditionalCsv -ObjectName programStages
+}
+
+if ($metadata.categoryCombos) {
+    $metadata.categoryCombos |
+        Where-Object id -NE 'bjDvmb4bfuf' |
+        Sort-Object -Property code |
+        Select-Object -Property id,code,name,dataDimensionType,skipTotal |
+        Export-ConditionalCsv -ObjectName categoryCombos
+}
+
+if ($metadata.programRuleVariables) {
+    $metadata.programRuleVariables |
+        Sort-Object -Property {$_.program.id},programRuleVariableSourceType,name |
+        Select-Object -Property @(
+            @{l='program';e={$_.program.id}}
+            'id'
+            'name'
+            'valueType'
+            'useCodeForOptionSet'
+            'programRuleVariableSourceType'
+            @{l='dataElement';e={$_.dataElement.id}}
+            @{l='programStage';e={$_.programStage.id}}
+            @{l='trackedEntityAttribute';e={$_.trackedEntityAttribute.id}}
+            ) |
+        Export-ConditionalCsv -ObjectName programRuleVariables
+}
+
+if ($metadata.programStageSections) {
+    $metadata.programStageSections |
+        Sort-Object -Property {$_.programStage.id},sortOrder |
+        Select-Object -Property @(
+            @{l='programStage';e={$_.programStage.id}}
+            'id'
+            'name'
+            'description'
+            'sortOrder'
+            @{l='renderType_MOBILE';e={$_.renderType.MOBILE.type}}
+            @{l='renderType_DESKTOP';e={$_.renderType.DESKTOP.type}}
+            @{l='dataElements';e={$_.dataElements.id | Sort-Object | Join-String -Separator ' '}}
+            ) |
+        Export-ConditionalCsv -ObjectName programStageSections
+}
+
+if ($metadata.trackedEntityAttributes) {
+    $metadata.trackedEntityAttributes |
+        Sort-Object -Property code |
+        Select-Object -Property @(
+            'id'
+            'code'
+            'shortName'
+            'name'
+            'formName'
+            'description'
+            'valueType'
+            'pattern'
+            'aggregationType'
+            'unique'
+            'generated'
+            'confidential'
+            'inherit'
+            'skipSynchronization'
+            'displayOnVisitSchedule'
+            'displayInListNoProgram'
+            'orgunitScope'
+            @{l='optionSet';e={$_.optionSet.id}}
+            ) |
+        Export-ConditionalCsv -ObjectName trackedEntityAttributes
+}
+
+if ($metadata.programIndicators) {
+    $metadata.programIndicators |
+        Sort-Object -Property {$_.program.id},code |
+        Select-Object -Property @(
+            @{l='program';e={$_.program.id}}
+            'id'
+            'code'
+            'shortName'
+            'name'
+            'aggregationType'
+            'analyticsType'
+            'displayInForm'
+            'filter'
+            'expression'
+            # ToDO: 'analyticsPeriodBoundaries'
+            ) |
+        Export-ConditionalCsv -ObjectName programIndicators
+}
+
+if ($metadata.trackedEntityTypes) {
+    $metadata.trackedEntityTypes |
+        Sort-Object -Property name |
+        Select-Object -Property @(
+            'id'
+            'name'
+            'description'
+            'featureType'
+            'minAttributesRequiredToSearch'
+            'maxTeiCountToReturn'
+            'allowAuditLog'
+            @{l='icon';e={$_.style.icon}}
+            @{l='trackedEntityTypeAttributes';e={$_.trackedEntityTypeAttributes.id | Sort-Object | Join-String -Separator ' '}}
+            ) |
+        Export-ConditionalCsv -ObjectName trackedEntityTypes
+}
+
+if ($metadata.programNotificationTemplates) {
+    $metadata.programNotificationTemplates |
+        Sort-Object -Property notificationTrigger,notificationRecipient,name |
+        Select-Object -Property @(
+            'id'
+            'name'
+            'notificationTrigger'
+            'notificationRecipient'
+            'notifyUsersInHierarchyOnly'
+            'sendRepeatable'
+            @{l='recipientUserGroup';e={$_.recipientUserGroup.id}}
+            'subjectTemplate'
+            'messageTemplate'
+            ) |
+        Export-ConditionalCsv -ObjectName programNotificationTemplates
 }
