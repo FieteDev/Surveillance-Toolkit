@@ -243,3 +243,97 @@ if ($metadata.programNotificationTemplates) {
             ) |
         Export-ConditionalCsv -ObjectName programNotificationTemplates
 }
+
+if ($metadata.categoryOptions) {
+    $metadata.categoryOptions |
+        Where-Object id -NE 'xYerKDKCefk' |
+        Sort-Object -Property code |
+        Select-Object -Property id,code,shortName,name |
+        Export-ConditionalCsv -ObjectName categoryOptions
+}
+
+if ($metadata.programStageDataElements) {
+    $metadata.programStageDataElements |
+        Sort-Object -Property {$_.programStage.id},sortOrder |
+        Select-Object -Property @(
+            @{l='programStage';e={$_.programStage.id}}
+            @{l='dataElement';e={$_.dataElement.id}}
+            'id'
+            'compulsory'
+            'allowProvidedElsewhere'
+            'displayInReports'
+            'allowFutureDate'
+            'renderOptionsAsRadio'
+            'skipSynchronization'
+            'skipAnalytics'
+            'sortOrder'
+            ) |
+        Export-ConditionalCsv -ObjectName programStageDataElements
+}
+
+if ($metadata.programSections) {
+    $metadata.programSections |
+        Sort-Object -Property {$_.program.id},sortOrder |
+        Select-Object -Property  @(
+            @{l='program';e={$_.program.id}}
+            'id'
+            'name'
+            @{l='renderType_MOBILE';e={$_.renderType.MOBILE.type}}
+            @{l='renderType_DESKTOP';e={$_.renderType.DESKTOP.type}}
+            'sortOrder'
+            @{l='trackedEntityAttributes';e={$_.trackedEntityAttributes.id | Sort-Object | Join-String -Separator ' '}}
+            ) |
+        Export-ConditionalCsv -ObjectName programSections
+}
+
+if ($metadata.dataElements) {
+    $metadata.dataElements |
+        Sort-Object -Property code |
+        Select-Object -Property  @(
+            'id'
+            'code'
+            'shortName'
+            'formName'
+            'name'
+            'description'
+            'valueType'
+            @{l='optionSet';e={$_.optionSet.id}}
+            'aggregationType'
+            'domainType'
+            'zeroIsSignificant'
+            @{l='categoryCombo';e={$_.categoryCombo.id}}
+            ) |
+        Export-ConditionalCsv -ObjectName dataElements
+}
+
+if ($metadata.programs) {
+    $metadata.programs |
+        Sort-Object -Property code |
+        Select-Object -Property  @(
+            'id'
+            'code'
+            'shortName'
+            'name'
+            'description'
+            'enrollmentDateLabel'
+            'incidentDateLabel'
+            'programType'
+            'displayIncidentDate'
+            'ignoreOverdueEvents'
+            'onlyEnrollOnce'
+            'selectEnrollmentDatesInFuture'
+            'selectIncidentDatesInFuture'
+            @{l='trackedEntityType';e={$_.trackedEntityType.id}}
+            @{l='categoryCombo';e={$_.categoryCombo.id}}
+            'skipOffline'
+            'displayFrontPageList'
+            'useFirstStageDuringRegistration'
+            'expiryDays'
+            'completeEventsExpiryDays'
+            'openDaysAfterCoEndDate'
+            'minAttributesRequiredToSearch'
+            'maxTeiCountToReturn'
+            'accessLevel'
+            ) |
+        Export-ConditionalCsv -ObjectName programs
+}
