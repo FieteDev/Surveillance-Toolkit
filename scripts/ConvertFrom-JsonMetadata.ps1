@@ -337,3 +337,18 @@ if ($metadata.programs) {
             ) |
         Export-ConditionalCsv -ObjectName programs
 }
+
+if ($metadata.programRules) {
+    $metadata.programRules |
+        Sort-Object -Property {$_.program.id},{$_.programStage.id},priority,name |
+        Select-Object -Property  @(
+            @{l='program';e={$_.program.id}}
+            @{l='programStage';e={$_.programStage.id}}
+            'id'
+            'priority'
+            'name'
+            'description'
+            'condition'
+            ) |
+        Export-ConditionalCsv -ObjectName programRules
+}
