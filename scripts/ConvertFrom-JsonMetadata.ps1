@@ -56,72 +56,15 @@ if ($metadata.system)
         Set-Content -NoNewline -LiteralPath $outFile
 }
 
-if ($metadata.optionSets)
-{
-    $metadata.optionSets |
-        Sort-Object -Property code |
-        Select-Object -Property id,code,name,valueType |
-        Export-ConditionalCsv -ObjectName optionSets
-}
-
-if ($metadata.programTrackedEntityAttributes) {
-    $metadata.programTrackedEntityAttributes |
-        Sort-Object -Property {$_.program.id},sortOrder |
-        Select-Object -Property @(
-            @{l='program';e={$_.program.id}}
-            @{l='trackedEntityAttribute';e={$_.trackedEntityAttribute.id}}
-            'id'
-            'mandatory'
-            'displayInList'
-            'searchable'
-            'renderOptionsAsRadio'
-            'sortOrder'
-            ) |
-        Export-ConditionalCsv -ObjectName programTrackedEntityAttributes
-}
-
-if ($metadata.options) {
-    $metadata.options |
-        Sort-Object -Property {$_.optionSet.id},sortOrder |
-        Select-Object -Property @{l='optionSet';e={$_.optionSet.id}},id,code,name,sortOrder |
-        Export-ConditionalCsv -ObjectName options
-}
-
+##############
+# Categories #
+##############
 if ($metadata.categories) {
     $metadata.categories |
         Where-Object id -NE 'GLevLNI9wkl' |
         Sort-Object -Property code |
         Select-Object -Property id,code,name,shortName,dataDimension,dataDimensionType |
         Export-ConditionalCsv -ObjectName categories
-}
-
-if ($metadata.programStages) {
-    $metadata.programStages |
-        Sort-Object -Property {$_.program.id},sortOrder |
-        Select-Object -Property @(
-            @{l='program';e={$_.program.id}}
-            'id'
-            'name'
-            'description'
-            'executionDateLabel'
-            'repeatable'
-            'sortOrder'
-            'minDaysFromStart'
-            'autoGenerateEvent'
-            'validationStrategy'
-            'displayGenerateEventBox'
-            'blockEntryForm'
-            'preGenerateUID'
-            'remindCompleted'
-            'generatedByEnrollmentDate'
-            'allowGenerateNextVisit'
-            'openAfterEnrollment'
-            'hideDueDate'
-            'enableUserAssignment'
-            'referral'
-            @{l='notificationTemplates';e={$_.notificationTemplates.id | Sort-Object | Join-String -Separator ' '}}
-            ) |
-        Export-ConditionalCsv -ObjectName programStages
 }
 
 if ($metadata.categoryCombos) {
@@ -132,118 +75,6 @@ if ($metadata.categoryCombos) {
         Export-ConditionalCsv -ObjectName categoryCombos
 }
 
-if ($metadata.programRuleVariables) {
-    $metadata.programRuleVariables |
-        Sort-Object -Property {$_.program.id},programRuleVariableSourceType,name |
-        Select-Object -Property @(
-            @{l='program';e={$_.program.id}}
-            'id'
-            'name'
-            'valueType'
-            'useCodeForOptionSet'
-            'programRuleVariableSourceType'
-            @{l='dataElement';e={$_.dataElement.id}}
-            @{l='programStage';e={$_.programStage.id}}
-            @{l='trackedEntityAttribute';e={$_.trackedEntityAttribute.id}}
-            ) |
-        Export-ConditionalCsv -ObjectName programRuleVariables
-}
-
-if ($metadata.programStageSections) {
-    $metadata.programStageSections |
-        Sort-Object -Property {$_.programStage.id},sortOrder |
-        Select-Object -Property @(
-            @{l='programStage';e={$_.programStage.id}}
-            'id'
-            'name'
-            'description'
-            'sortOrder'
-            @{l='renderType_MOBILE';e={$_.renderType.MOBILE.type}}
-            @{l='renderType_DESKTOP';e={$_.renderType.DESKTOP.type}}
-            @{l='dataElements';e={$_.dataElements.id | Sort-Object | Join-String -Separator ' '}}
-            ) |
-        Export-ConditionalCsv -ObjectName programStageSections
-}
-
-if ($metadata.trackedEntityAttributes) {
-    $metadata.trackedEntityAttributes |
-        Sort-Object -Property code |
-        Select-Object -Property @(
-            'id'
-            'code'
-            'shortName'
-            'name'
-            'formName'
-            'description'
-            'valueType'
-            'pattern'
-            'aggregationType'
-            'unique'
-            'generated'
-            'confidential'
-            'inherit'
-            'skipSynchronization'
-            'displayOnVisitSchedule'
-            'displayInListNoProgram'
-            'orgunitScope'
-            @{l='optionSet';e={$_.optionSet.id}}
-            ) |
-        Export-ConditionalCsv -ObjectName trackedEntityAttributes
-}
-
-if ($metadata.programIndicators) {
-    $metadata.programIndicators |
-        Sort-Object -Property {$_.program.id},code |
-        Select-Object -Property @(
-            @{l='program';e={$_.program.id}}
-            'id'
-            'code'
-            'shortName'
-            'name'
-            'aggregationType'
-            'analyticsType'
-            'displayInForm'
-            'filter'
-            'expression'
-            # ToDO: 'analyticsPeriodBoundaries'
-            ) |
-        Export-ConditionalCsv -ObjectName programIndicators
-}
-
-if ($metadata.trackedEntityTypes) {
-    $metadata.trackedEntityTypes |
-        Sort-Object -Property name |
-        Select-Object -Property @(
-            'id'
-            'name'
-            'description'
-            'featureType'
-            'minAttributesRequiredToSearch'
-            'maxTeiCountToReturn'
-            'allowAuditLog'
-            @{l='icon';e={$_.style.icon}}
-            @{l='trackedEntityTypeAttributes';e={$_.trackedEntityTypeAttributes.id | Sort-Object | Join-String -Separator ' '}}
-            ) |
-        Export-ConditionalCsv -ObjectName trackedEntityTypes
-}
-
-if ($metadata.programNotificationTemplates) {
-    $metadata.programNotificationTemplates |
-        Sort-Object -Property notificationTrigger,notificationRecipient,name |
-        Select-Object -Property @(
-            'id'
-            'name'
-            'notificationTrigger'
-            'notificationRecipient'
-            'notifyUsersInHierarchyOnly'
-            'sendRepeatable'
-            @{l='recipientUserGroup';e={$_.recipientUserGroup.id}}
-            'subjectTemplate'
-            'messageTemplate'
-            ) |
-        Export-ConditionalCsv -ObjectName programNotificationTemplates
-}
-
 if ($metadata.categoryOptions) {
     $metadata.categoryOptions |
         Where-Object id -NE 'xYerKDKCefk' |
@@ -252,40 +83,9 @@ if ($metadata.categoryOptions) {
         Export-ConditionalCsv -ObjectName categoryOptions
 }
 
-if ($metadata.programStageDataElements) {
-    $metadata.programStageDataElements |
-        Sort-Object -Property {$_.programStage.id},sortOrder |
-        Select-Object -Property @(
-            @{l='programStage';e={$_.programStage.id}}
-            @{l='dataElement';e={$_.dataElement.id}}
-            'id'
-            'compulsory'
-            'allowProvidedElsewhere'
-            'displayInReports'
-            'allowFutureDate'
-            'renderOptionsAsRadio'
-            'skipSynchronization'
-            'skipAnalytics'
-            'sortOrder'
-            ) |
-        Export-ConditionalCsv -ObjectName programStageDataElements
-}
-
-if ($metadata.programSections) {
-    $metadata.programSections |
-        Sort-Object -Property {$_.program.id},sortOrder |
-        Select-Object -Property  @(
-            @{l='program';e={$_.program.id}}
-            'id'
-            'name'
-            @{l='renderType_MOBILE';e={$_.renderType.MOBILE.type}}
-            @{l='renderType_DESKTOP';e={$_.renderType.DESKTOP.type}}
-            'sortOrder'
-            @{l='trackedEntityAttributes';e={$_.trackedEntityAttributes.id | Sort-Object | Join-String -Separator ' '}}
-            ) |
-        Export-ConditionalCsv -ObjectName programSections
-}
-
+#################
+# Data Elements #
+#################
 if ($metadata.dataElements) {
     $metadata.dataElements |
         Sort-Object -Property code |
@@ -306,6 +106,26 @@ if ($metadata.dataElements) {
         Export-ConditionalCsv -ObjectName dataElements
 }
 
+###########
+# Options #
+###########
+if ($metadata.options) {
+    $metadata.options |
+        Sort-Object -Property {$_.optionSet.id},sortOrder |
+        Select-Object -Property @{l='optionSet';e={$_.optionSet.id}},id,code,name,sortOrder |
+        Export-ConditionalCsv -ObjectName options
+}
+
+if ($metadata.optionSets)
+{
+    $metadata.optionSets |
+        Sort-Object -Property code |
+        Select-Object -Property id,code,name,valueType |
+        Export-ConditionalCsv -ObjectName optionSets
+}
+###########
+# Program #
+###########
 if ($metadata.programs) {
     $metadata.programs |
         Sort-Object -Property code |
@@ -338,6 +158,140 @@ if ($metadata.programs) {
         Export-ConditionalCsv -ObjectName programs
 }
 
+if ($metadata.programIndicators) {
+    $metadata.programIndicators |
+        Sort-Object -Property {$_.program.id},code |
+        Select-Object -Property @(
+            @{l='program';e={$_.program.id}}
+            'id'
+            'code'
+            'shortName'
+            'name'
+            'aggregationType'
+            'analyticsType'
+            'displayInForm'
+            'filter'
+            'expression'
+            # ToDO: 'analyticsPeriodBoundaries'
+            ) |
+        Export-ConditionalCsv -ObjectName programIndicators
+}
+
+if ($metadata.programSections) {
+    $metadata.programSections |
+        Sort-Object -Property {$_.program.id},sortOrder |
+        Select-Object -Property  @(
+            @{l='program';e={$_.program.id}}
+            'id'
+            'name'
+            @{l='renderType_MOBILE';e={$_.renderType.MOBILE.type}}
+            @{l='renderType_DESKTOP';e={$_.renderType.DESKTOP.type}}
+            'sortOrder'
+            @{l='trackedEntityAttributes';e={$_.trackedEntityAttributes.id | Sort-Object | Join-String -Separator ' '}}
+            ) |
+        Export-ConditionalCsv -ObjectName programSections
+}
+
+if ($metadata.programStages) {
+    $metadata.programStages |
+        Sort-Object -Property {$_.program.id},sortOrder |
+        Select-Object -Property @(
+            @{l='program';e={$_.program.id}}
+            'id'
+            'name'
+            'description'
+            'executionDateLabel'
+            'repeatable'
+            'sortOrder'
+            'minDaysFromStart'
+            'autoGenerateEvent'
+            'validationStrategy'
+            'displayGenerateEventBox'
+            'blockEntryForm'
+            'preGenerateUID'
+            'remindCompleted'
+            'generatedByEnrollmentDate'
+            'allowGenerateNextVisit'
+            'openAfterEnrollment'
+            'hideDueDate'
+            'enableUserAssignment'
+            'referral'
+            @{l='notificationTemplates';e={$_.notificationTemplates.id | Sort-Object | Join-String -Separator ' '}}
+            ) |
+        Export-ConditionalCsv -ObjectName programStages
+}
+
+if ($metadata.programStageSections) {
+    $metadata.programStageSections |
+        Sort-Object -Property {$_.programStage.id},sortOrder |
+        Select-Object -Property @(
+            @{l='programStage';e={$_.programStage.id}}
+            'id'
+            'name'
+            'description'
+            'sortOrder'
+            @{l='renderType_MOBILE';e={$_.renderType.MOBILE.type}}
+            @{l='renderType_DESKTOP';e={$_.renderType.DESKTOP.type}}
+            @{l='dataElements';e={$_.dataElements.id | Sort-Object | Join-String -Separator ' '}}
+            ) |
+        Export-ConditionalCsv -ObjectName programStageSections
+}
+
+if ($metadata.programNotificationTemplates) {
+    $metadata.programNotificationTemplates |
+        Sort-Object -Property notificationTrigger,notificationRecipient,name |
+        Select-Object -Property @(
+            'id'
+            'name'
+            'notificationTrigger'
+            'notificationRecipient'
+            'notifyUsersInHierarchyOnly'
+            'sendRepeatable'
+            @{l='recipientUserGroup';e={$_.recipientUserGroup.id}}
+            'subjectTemplate'
+            'messageTemplate'
+            ) |
+        Export-ConditionalCsv -ObjectName programNotificationTemplates
+}
+
+if ($metadata.programStageDataElements) {
+    $metadata.programStageDataElements |
+        Sort-Object -Property {$_.programStage.id},sortOrder |
+        Select-Object -Property @(
+            @{l='programStage';e={$_.programStage.id}}
+            @{l='dataElement';e={$_.dataElement.id}}
+            'id'
+            'compulsory'
+            'allowProvidedElsewhere'
+            'displayInReports'
+            'allowFutureDate'
+            'renderOptionsAsRadio'
+            'skipSynchronization'
+            'skipAnalytics'
+            'sortOrder'
+            ) |
+        Export-ConditionalCsv -ObjectName programStageDataElements
+}
+
+if ($metadata.programTrackedEntityAttributes) {
+    $metadata.programTrackedEntityAttributes |
+        Sort-Object -Property {$_.program.id},sortOrder |
+        Select-Object -Property @(
+            @{l='program';e={$_.program.id}}
+            @{l='trackedEntityAttribute';e={$_.trackedEntityAttribute.id}}
+            'id'
+            'mandatory'
+            'displayInList'
+            'searchable'
+            'renderOptionsAsRadio'
+            'sortOrder'
+            ) |
+        Export-ConditionalCsv -ObjectName programTrackedEntityAttributes
+}
+
+#################
+# Program Rules #
+#################
 if ($metadata.programRules) {
     $metadata.programRules |
         Sort-Object -Property {$_.program.id},{$_.programStage.id},priority,name |
@@ -369,4 +323,66 @@ if ($metadata.programRuleActions) {
             @{l='programStageSection';e={$_.programStageSection.id}}
             ) |
         Export-ConditionalCsv -ObjectName programRuleActions
+}
+
+if ($metadata.programRuleVariables) {
+    $metadata.programRuleVariables |
+        Sort-Object -Property {$_.program.id},programRuleVariableSourceType,name |
+        Select-Object -Property @(
+            @{l='program';e={$_.program.id}}
+            'id'
+            'name'
+            'valueType'
+            'useCodeForOptionSet'
+            'programRuleVariableSourceType'
+            @{l='dataElement';e={$_.dataElement.id}}
+            @{l='programStage';e={$_.programStage.id}}
+            @{l='trackedEntityAttribute';e={$_.trackedEntityAttribute.id}}
+            ) |
+        Export-ConditionalCsv -ObjectName programRuleVariables
+}
+####################
+# Tracked Entities #
+####################
+if ($metadata.trackedEntityTypes) {
+    $metadata.trackedEntityTypes |
+        Sort-Object -Property name |
+        Select-Object -Property @(
+            'id'
+            'name'
+            'description'
+            'featureType'
+            'minAttributesRequiredToSearch'
+            'maxTeiCountToReturn'
+            'allowAuditLog'
+            @{l='icon';e={$_.style.icon}}
+            @{l='trackedEntityTypeAttributes';e={$_.trackedEntityTypeAttributes.id | Sort-Object | Join-String -Separator ' '}}
+            ) |
+        Export-ConditionalCsv -ObjectName trackedEntityTypes
+}
+
+if ($metadata.trackedEntityAttributes) {
+    $metadata.trackedEntityAttributes |
+        Sort-Object -Property code |
+        Select-Object -Property @(
+            'id'
+            'code'
+            'shortName'
+            'name'
+            'formName'
+            'description'
+            'valueType'
+            'pattern'
+            'aggregationType'
+            'unique'
+            'generated'
+            'confidential'
+            'inherit'
+            'skipSynchronization'
+            'displayOnVisitSchedule'
+            'displayInListNoProgram'
+            'orgunitScope'
+            @{l='optionSet';e={$_.optionSet.id}}
+            ) |
+        Export-ConditionalCsv -ObjectName trackedEntityAttributes
 }
