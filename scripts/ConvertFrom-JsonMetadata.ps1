@@ -352,3 +352,21 @@ if ($metadata.programRules) {
             ) |
         Export-ConditionalCsv -ObjectName programRules
 }
+
+if ($metadata.programRuleActions) {
+    $metadata.programRuleActions |
+        Sort-Object -Property programRuleActionType,{$_.programRule.id},id |
+        Select-Object -Property  @(
+            'id'
+            @{l='programRule';e={$_.programRule.id}}
+            'programRuleActionType'
+            'location'
+            'content'
+            'data'
+            'templateUid'
+            @{l='dataElement';e={$_.dataElement.id}}
+            @{l='trackedEntityAttribute';e={$_.trackedEntityAttribute.id}}
+            @{l='programStageSection';e={$_.programStageSection.id}}
+            ) |
+        Export-ConditionalCsv -ObjectName programRuleActions
+}
