@@ -236,7 +236,6 @@ if ($metadata.attributes) {
     $metadata.attributes |
         Sort-Object -Property {$_.optionSet.id},code |
         Select-Object -Property  @(
-            @{l='optionSet';e={$_.optionSet.id}}
             'id'
             'code'
             'shortName'
