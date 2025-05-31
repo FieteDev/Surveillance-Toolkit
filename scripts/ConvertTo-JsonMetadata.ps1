@@ -11,7 +11,8 @@ param(
             ) -ChildPath "metadata_$(
                 Get-Date -Format FileDateTimeUniversal
             ).json"
-        )
+        ),
+    [switch]$Compress
 )
 
 if ($VerbosePreference -ne 'SilentlyContinue') {
@@ -93,5 +94,5 @@ foreach ($file in $inFiles) {
 }
 
 $metadata |
-    ConvertTo-Json -Depth 100 |
+    ConvertTo-Json -Depth 100 -Compress:$Compress |
     Set-Content -LiteralPath $OutputFile
