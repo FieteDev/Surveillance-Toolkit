@@ -3,7 +3,15 @@ param(
     [Parameter(Position=0)]#, Mandatory)]
     [string]$LiteralPath = '/home/brar/Downloads/metadata.json',
     [Parameter(Position=1)]
-    [string]$OutputDirectory = (Join-Path -Path (Resolve-Path -LiteralPath (Join-Path -Path $PSScriptRoot -ChildPath '..' -AdditionalChildPath 'metadata') -Relative) -ChildPath (Get-Date -Format FileDateTimeUniversal))
+    [string]$OutputDirectory = (
+        Join-Path -Path (
+            Resolve-Path -LiteralPath (
+                Join-Path -Path $PSScriptRoot -ChildPath '..' -AdditionalChildPath 'metadata'
+                ) -Relative
+            ) -ChildPath (
+                Get-Date -Format FileDateTimeUniversal
+            )
+        )
 )
 
 $resolvedPath = Resolve-Path -LiteralPath $LiteralPath -Relative
@@ -83,6 +91,21 @@ if ($metadata.categoryOptions) {
         Export-ConditionalCsv -ObjectName categoryOptions
 }
 
+if ($metadata.categoryOptionCombos) {
+    $metadata.categoryOptionCombos |
+        Where-Object id -NE 'HllvX50cXC0' |
+        Sort-Object -Property code |
+        Select-Object -Property  @(
+            'id'
+            'code'
+            'name'
+            'ignoreApproval'
+            @{l='categoryCombo';e={$_.categoryCombo.id}}
+            @{l='categoryOptions';e={$_.categoryOptions.id | Sort-Object | Join-String -Separator ' '}}
+            ) |
+        Export-ConditionalCsv -ObjectName categoryOptionCombos
+}
+
 #################
 # Data Elements #
 #################
@@ -106,6 +129,34 @@ if ($metadata.dataElements) {
         Export-ConditionalCsv -ObjectName dataElements
 }
 
+if ($metadata.dataElementGroups) {
+    $metadata.dataElementGroups |
+        Sort-Object -Property code |
+        Select-Object -Property  @(
+            'id'
+            'code'
+            'shortName'
+            'name'
+            @{l='dataElements';e={$_.dataElements.id | Sort-Object | Join-String -Separator ' '}}
+            ) |
+        Export-ConditionalCsv -ObjectName dataElementGroups
+}
+
+##############
+# Indicators #
+##############
+if ($metadata.indicatorTypes) {
+    $metadata.indicatorTypes |
+        Sort-Object -Property name |
+        Select-Object -Property  @(
+            'id'
+            'name'
+            'factor'
+            'number'
+            ) |
+        Export-ConditionalCsv -ObjectName indicatorTypes
+}
+
 ###########
 # Options #
 ###########
@@ -116,13 +167,124 @@ if ($metadata.options) {
         Export-ConditionalCsv -ObjectName options
 }
 
-if ($metadata.optionSets)
-{
+if ($metadata.optionSets) {
     $metadata.optionSets |
         Sort-Object -Property code |
         Select-Object -Property id,code,name,valueType |
         Export-ConditionalCsv -ObjectName optionSets
 }
+
+if ($metadata.optionGroups) {
+    $metadata.optionGroups |
+        Sort-Object -Property {$_.optionSet.id},code |
+        Select-Object -Property  @(
+            @{l='optionSet';e={$_.optionSet.id}}
+            'id'
+            'code'
+            'shortName'
+            'name'
+            'description'
+            @{l='options';e={$_.options.id | Sort-Object | Join-String -Separator ' '}}
+            ) |
+        Export-ConditionalCsv -ObjectName optionGroups
+}
+
+if ($metadata.optionGroupSets) {
+    $metadata.optionGroupSets |
+        Sort-Object -Property {$_.optionSet.id},code |
+        Select-Object -Property  @(
+            @{l='optionSet';e={$_.optionSet.id}}
+            'id'
+            'code'
+            'name'
+            'dataDimension'
+            @{l='optionGroups';e={$_.optionGroups.id | Sort-Object | Join-String -Separator ' '}}
+            ) |
+        Export-ConditionalCsv -ObjectName optionGroupSets
+}
+
+######################
+# Organisation Units #
+######################
+if ($metadata.organisationUnitGroups) {
+    $metadata.organisationUnitGroups |
+        Sort-Object -Property code |
+        Select-Object -Property id,code,shortName,name |
+        Export-ConditionalCsv -ObjectName organisationUnitGroups
+}
+
+if ($metadata.organisationUnitGroupSets) {
+    $metadata.organisationUnitGroupSets |
+        Sort-Object -Property code |
+        Select-Object -Property  @(
+            'id'
+            'code'
+            'shortName'
+            'name'
+            'dataDimension'
+            'compulsory'
+            'includeSubhierarchyInAnalytics'
+            @{l='organisationUnitGroups';e={$_.organisationUnitGroups.id | Sort-Object | Join-String -Separator ' '}}
+            ) |
+        Export-ConditionalCsv -ObjectName organisationUnitGroupSets
+}
+
+#########
+# Other #
+#########
+if ($metadata.attributes) {
+    $metadata.attributes |
+        Sort-Object -Property {$_.optionSet.id},code |
+        Select-Object -Property  @(
+            @{l='optionSet';e={$_.optionSet.id}}
+            'id'
+            'code'
+            'shortName'
+            'name'
+            'valueType'
+            @{l='objectTypes';e={$_.objectTypes | Sort-Object | Join-String -Separator ' '}}
+            'description'
+            'mandatory'
+            'unique'
+            'categoryAttribute'
+            'categoryOptionAttribute'
+            'categoryOptionComboAttribute'
+            'categoryOptionGroupAttribute'
+            'categoryOptionGroupSetAttribute'
+            'constantAttribute'
+            'dataElementAttribute'
+            'dataElementGroupAttribute'
+            'dataElementGroupSetAttribute'
+            'dataSetAttribute'
+            'documentAttribute'
+            'eventChartAttribute'
+            'eventReportAttribute'
+            'indicatorAttribute'
+            'indicatorGroupAttribute'
+            'legendSetAttribute'
+            'mapAttribute'
+            'optionAttribute'
+            'optionSetAttribute'
+            'organisationUnitAttribute'
+            'organisationUnitGroupAttribute'
+            'organisationUnitGroupSetAttribute'
+            'programAttribute'
+            'programIndicatorAttribute'
+            'programStageAttribute'
+            'relationshipTypeAttribute'
+            'sectionAttribute'
+            'sqlViewAttribute'
+            'trackedEntityAttributeAttribute'
+            'trackedEntityTypeAttribute'
+            'userAttribute'
+            'userGroupAttribute'
+            'validationRuleAttribute'
+            'validationRuleGroupAttribute'
+            'visualizationAttribute'
+            ) |
+        Export-ConditionalCsv -ObjectName attributes
+}
+
 ###########
 # Program #
 ###########
@@ -385,4 +547,55 @@ if ($metadata.trackedEntityAttributes) {
             @{l='optionSet';e={$_.optionSet.id}}
             ) |
         Export-ConditionalCsv -ObjectName trackedEntityAttributes
+}
+
+#########
+# Users #
+#########
+if ($metadata.userGroups) {
+    $metadata.userGroups |
+        Sort-Object -Property name |
+        Select-Object -Property @(
+            'id'
+            'code'
+            'name'
+            @{l='managedGroups';e={$_.managedGroups.id | Sort-Object | Join-String -Separator ' '}}
+            ) |
+        Export-ConditionalCsv -ObjectName userGroups
+}
+
+if ($metadata.userRoles) {
+    $metadata.userRoles |
+        Sort-Object -Property name |
+        Select-Object -Property @(
+            'id'
+            'name'
+            'description'
+            @{l='authorities';e={$_.authorities | Sort-Object | Join-String -Separator ' '}}
+            ) |
+        Export-ConditionalCsv -ObjectName userRoles
+}
+
+##############
+# Validation #
+##############
+if ($metadata.validationRules) {
+    $metadata.validationRules |
+        Sort-Object -Property name |
+        Select-Object -Property @(
+            'id'
+            'name'
+            'importance'
+            'operator'
+            'periodType'
+            'skipFormValidation'
+            @{l='leftSide_slidingWindow';e={$_.leftSide.slidingWindow}}
+            @{l='leftSide_missingValueStrategy';e={$_.leftSide.missingValueStrategy}}
+            @{l='leftSide_expression';e={$_.leftSide.expression}}
+            @{l='rightSide_slidingWindow';e={$_.rightSide.slidingWindow}}
+            @{l='rightSide_missingValueStrategy';e={$_.rightSide.missingValueStrategy}}
+            @{l='rightSide_expression';e={$_.rightSide.expression}}
+            @{l='organisationUnitLevels';e={$_.organisationUnitLevels | Sort-Object | Join-String -Separator ' '}}
+            ) |
+        Export-ConditionalCsv -ObjectName validationRules
 }
