@@ -497,6 +497,39 @@ foreach ($file in $inFiles) {
                 $final.Add($outObj) | Out-Null
             }
         }
+        programStageDataElements {
+            $objList |
+            ForEach-Object {
+                $inObj = $_
+                $outObj = [ordered]@{}
+                $inObj.psobject.properties | ForEach-Object {
+                    $name = $_.Name
+                    $value = $_.Value
+                    if($value -eq '') {
+                        return
+                    }
+                    switch -Exact -CaseSensitive ($name) {
+                        {$_ -in 'compulsory','allowProvidedElsewhere','displayInReports','allowFutureDate','renderOptionsAsRadio','skipSynchronization','skipAnalytics'} {
+                            $outObj[$name] = [bool]::Parse($value)
+                            break
+                        }
+                        {$_ -in 'programStage','dataElement'} {
+                            $outObj[$name] = [PSCustomObject]@{id = $value}
+                            break
+                        }
+                        sortOrder {
+                            $outObj[$name] = [int]$value
+                            break
+                        }
+                        Default {
+                            $outObj[$name] = $value
+                            break
+                        }
+                    }
+                }
+                $final.Add($outObj) | Out-Null
+            }
+        }
         Default {
             #$final = $objList
             throw "Unhandled object type: $objName"
