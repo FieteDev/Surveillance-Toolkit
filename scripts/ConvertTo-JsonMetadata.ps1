@@ -530,6 +530,44 @@ foreach ($file in $inFiles) {
                 $final.Add($outObj) | Out-Null
             }
         }
+        programStages {
+            $objList |
+            ForEach-Object {
+                $inObj = $_
+                $outObj = [ordered]@{}
+                $inObj.psobject.properties | ForEach-Object {
+                    $name = $_.Name
+                    $value = $_.Value
+                    if($value -eq '') {
+                        return
+                    }
+                    switch -Exact -CaseSensitive ($name) {
+                        program {
+                            $outObj[$name] = [PSCustomObject]@{id = $value}
+                            break
+                        }
+                        notificationTemplates {
+                            $outObj[$name] = $value.Split(' ') |
+                                ForEach-Object  {[PSCustomObject]@{id = $_}}
+                            break
+                        }
+                        {$_ -in 'sortOrder','minDaysFromStart'} {
+                            $outObj[$name] = [int]$value
+                            break
+                        }
+                        {$_ -in 'repeatable','autoGenerateEvent','displayGenerateEventBox','blockEntryForm','preGenerateUID','remindCompleted','generatedByEnrollmentDate','allowGenerateNextVisit','openAfterEnrollment','hideDueDate','enableUserAssignment','referral'} {
+                            $outObj[$name] = [bool]::Parse($value)
+                            break
+                        }
+                        Default {
+                            $outObj[$name] = $value
+                            break
+                        }
+                    }
+                }
+                $final.Add($outObj) | Out-Null
+            }
+        }
         Default {
             #$final = $objList
             throw "Unhandled object type: $objName"
