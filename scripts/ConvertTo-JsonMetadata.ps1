@@ -12,852 +12,413 @@ param(
                 Get-Date -Format FileDateTimeUniversal
             ).json"
         ),
-    [switch]$Compress
+    [switch]$Compress,
+    [switch]$SortObjects
 )
 
 if ($VerbosePreference -ne 'SilentlyContinue') {
     $InformationPreference = $VerbosePreference
 }
 
+$renderTypeConverter = {
+    param ($outObj,$inputName,$outputName)
+    $parts = $inputName.Split('_')
+    if ($parts.Length -ne 2 -or $parts[0] -ne $outputName) {
+        throw "Failed to convert renderType. Invalid input name: '$inputName' (output name is: '$outputName')."
+    }
+    $subType = $parts[1]
+    $value = [string]$input
+    if ($outObj.Contains($outputName)) {
+        $outObj[$outputName].Add($subType, [PSCustomObject]@{type = $value})
+    } else {
+        $outObj[$outputName] = [ordered]@{"$subType" = [PSCustomObject]@{type = $value}}
+    }
+}
+
+$expressionConverter = {
+    param ($outObj,$inputName,$outputName)
+    $parts = $inputName.Split('_')
+    if ($parts.Length -ne 2 -or $parts[0] -ne $outputName) {
+        throw "Failed to convert validation rule expression. Invalid input name: '$inputName' (output name is: '$outputName')."
+    }
+    $subType = $parts[1]
+    if ($subType -eq 'slidingWindow') {
+        $value = [bool]$input
+    } else {
+        $value = [string]$input
+    }
+    if ($outObj.Contains($outputName)) {
+        $outObj[$outputName].Add($subType, $value)
+    } else {
+        $outObj[$outputName] = [ordered]@{"$subType" = $value}
+    }
+}
+
+function Convert-MetadataObjects {
+    param(
+        [string[]]$BoolProperties,
+        [string[]]$IntProperties,
+        [string[]]$StringProperties,
+        [string[]]$IdProperties,
+        [string[]]$IntArrayProperties,
+        [string[]]$StringArrayProperties,
+        [string[]]$IdArrayProperties,
+        [hashtable[]]$OtherProperties,
+        [object]$DefaultConversion
+    )
+    process {
+        $inObj = $_
+        $outObj = [ordered]@{}
+        $inObj.psobject.properties |
+            ForEach-Object {
+                $name = $_.Name
+                $value = $_.Value
+                if($value -eq '') {
+                    return
+                }
+                switch -Exact -CaseSensitive ($name) {
+                    {$name -in $BoolProperties} {
+                        $outObj[$name] = [bool]::Parse($value)
+                        return
+                    }
+                    {$name -in $IntProperties} {
+                        $outObj[$name] = [int]$value
+                        return
+                    }
+                    {$name -in $StringProperties} {
+                        $outObj[$name] = $value
+                        return
+                    }
+                    {$name -in $IdProperties} {
+                        $outObj[$name] = [PSCustomObject]@{id = $value}
+                        return
+                    }
+                    {$name -in $IntArrayProperties} {
+                        $outObj[$name] = @($value.Split(' ') |
+                            ForEach-Object {[int]$_})
+                        return
+                    }
+                    {$name -in $StringArrayProperties} {
+                        $outObj[$name] = @($value.Split(' '))
+                        return
+                    }
+                    {$name -in $IdArrayProperties} {
+                        $outObj[$name] = @($value.Split(' ') |
+                            ForEach-Object {[PSCustomObject]@{id = $_}})
+                        return
+                    }
+                    Default {
+                        foreach ($otherProp in $OtherProperties) {
+                            if ($name -eq $otherProp['l']) {
+                                $value | Invoke-Command $otherProp['e'] -ArgumentList $outObj,$name,$otherProp['n'] | Out-Null
+                                return
+                            }
+                        }
+                        switch -Exact -CaseSensitive ($DefaultConversion) {
+                            {$null -ne $_ -and $_.GetType() -eq [scriptblock]} {
+                                $value | Invoke-Command $DefaultConversion -ArgumentList $outObj,$name | Out-Null
+                                return
+                            }
+                            bool {
+                                $outObj[$name] = [bool]::Parse($value)
+                                return
+                            }
+                            int {
+                                $outObj[$name] = [int]$value
+                                return
+                            }
+                            Default {
+                                $outObj[$name] = $value
+                                return
+                            }
+                        }
+                    }
+                }
+        }
+        Write-Output $outObj
+    }
+}
+
+function Import-MetadataCsv {
+    begin {
+        $ret = @{}
+    }
+    process {
+        $objName = $_.BaseName
+        $objValues = $_ | Import-Csv
+        switch -Exact -CaseSensitive ($objName) {
+            attributes {
+                $ret[$objName] = @($objValues |
+                    Convert-MetadataObjects `
+                        -StringProperties id,code,name,shortName,description,valueType `
+                        -StringArrayProperties objectTypes `
+                        -DefaultConversion bool)
+                break
+            }
+            dataElementGroups {
+                $ret[$objName] = @($objValues |
+                    Convert-MetadataObjects -IdArrayProperties dataElements)
+                break
+            }
+            dataElements {
+                $ret[$objName] = @($objValues |
+                    Convert-MetadataObjects `
+                        -BoolProperties zeroIsSignificant `
+                        -IdArrayProperties optionSet,categoryCombo)
+                break
+            }
+            indicatorTypes {
+                $ret[$objName] = @($objValues |
+                    Convert-MetadataObjects `
+                        -BoolProperties number `
+                        -IntProperties factor)
+                break
+            }
+            optionGroups {
+                $ret[$objName] = @($objValues |
+                    Convert-MetadataObjects `
+                        -IdProperties optionSet `
+                        -IdArrayProperties options)
+                break
+            }
+            optionGroupSets {
+                $ret[$objName] = @($objValues |
+                    Convert-MetadataObjects `
+                        -BoolProperties dataDimension `
+                        -IdProperties optionSet `
+                        -IdArrayProperties optionGroups)
+                break
+            }
+            options {
+                $ret[$objName] = @($objValues |
+                    Convert-MetadataObjects `
+                        -IntProperties sortOrder `
+                        -IdProperties optionSet)
+                break
+            }
+            optionSets {
+                $ret[$objName] = @($objValues |
+                    Convert-MetadataObjects)
+                break
+            }
+            organisationUnitGroups {
+                $ret[$objName] = @($objValues |
+                    Convert-MetadataObjects)
+                break
+            }
+            organisationUnitGroupSets {
+                $ret[$objName] = @($objValues |
+                    Convert-MetadataObjects `
+                        -BoolProperties dataDimension,compulsory,includeSubhierarchyInAnalytics `
+                        -IdArrayProperties organisationUnitGroups)
+                break
+            }
+            programIndicators {
+                # Skip for now
+                break
+            }
+            programNotificationTemplates {
+                $ret[$objName] = @($objValues |
+                    Convert-MetadataObjects `
+                        -BoolProperties notifyUsersInHierarchyOnly,sendRepeatable `
+                        -IdProperties recipientUserGroup)
+                break
+            }
+            programRuleActions {
+                $ret[$objName] = @($objValues |
+                    Convert-MetadataObjects `
+                        -IdProperties programRule,dataElement,trackedEntityAttribute,programStageSection)
+                break
+            }
+            programRules {
+                $ret[$objName] = @($objValues |
+                    Convert-MetadataObjects `
+                        -IntProperties priority `
+                        -IdProperties program,programStage)
+                break
+            }
+            programRuleVariables {
+                $ret[$objName] = @($objValues |
+                    Convert-MetadataObjects `
+                        -BoolProperties useCodeForOptionSet `
+                        -IdProperties program,dataElement,programStage,trackedEntityAttribute)
+                break
+            }
+            programs {
+                $ret[$objName] = @($objValues |
+                    Convert-MetadataObjects `
+                        -IntProperties expiryDays,completeEventsExpiryDays,openDaysAfterCoEndDate,minAttributesRequiredToSearch,maxTeiCountToReturn `
+                        -BoolProperties displayIncidentDate,ignoreOverdueEvents,onlyEnrollOnce,selectEnrollmentDatesInFuture,selectIncidentDatesInFuture,skipOffline,displayFrontPageList,useFirstStageDuringRegistration `
+                        -IdProperties trackedEntityType,categoryCombo)
+                break
+            }
+            programSections {
+                $ret[$objName] = @($objValues |
+                    Convert-MetadataObjects `
+                        -IntProperties sortOrder `
+                        -IdArrayProperties trackedEntityAttributes `
+                        -IdProperties program `
+                        -OtherProperties `
+                        @{
+                            l = 'renderType_MOBILE'
+                            e = $renderTypeConverter
+                            n = 'renderType'
+                        },`
+                        @{
+                            l = 'renderType_DESKTOP'
+                            e = $renderTypeConverter
+                            n = 'renderType'
+                        })
+                break
+            }
+            programStageDataElements {
+                $ret[$objName] = @($objValues |
+                    Convert-MetadataObjects `
+                        -BoolProperties compulsory,allowProvidedElsewhere,displayInReports,allowFutureDate,renderOptionsAsRadio,skipSynchronization,skipAnalytics `
+                        -IntProperties sortOrder `
+                        -IdProperties programStage,dataElement)
+                break
+            }
+            programStages {
+                $ret[$objName] = @($objValues |
+                    Convert-MetadataObjects `
+                        -BoolProperties repeatable,autoGenerateEvent,displayGenerateEventBox,blockEntryForm,preGenerateUID,remindCompleted,generatedByEnrollmentDate,allowGenerateNextVisit,openAfterEnrollment,hideDueDate,enableUserAssignment,referral `
+                        -IntProperties sortOrder,minDaysFromStart `
+                        -IdProperties program `
+                        -IdArrayProperties notificationTemplates)
+                break
+            }
+            programStageSections {
+                $ret[$objName] = @($objValues |
+                    Convert-MetadataObjects `
+                        -IntProperties sortOrder `
+                        -IdProperties programStage `
+                        -IdArrayProperties dataElements `
+                        -OtherProperties `
+                        @{
+                            l = 'renderType_MOBILE'
+                            e = $renderTypeConverter
+                            n = 'renderType'
+                        },`
+                        @{
+                            l = 'renderType_DESKTOP'
+                            e = $renderTypeConverter
+                            n = 'renderType'
+                        })
+                break
+            }
+            programTrackedEntityAttributes {
+                $ret[$objName] = @($objValues |
+                    Convert-MetadataObjects `
+                        -BoolProperties mandatory,displayInList,searchable,renderOptionsAsRadio `
+                        -IntProperties sortOrder `
+                        -IdProperties program,trackedEntityAttribute)
+                break
+            }
+            trackedEntityAttributes {
+                $ret[$objName] = @($objValues |
+                    Convert-MetadataObjects `
+                        -BoolProperties unique,generated,confidential,inherit,skipSynchronization,displayOnVisitSchedule,displayInListNoProgram,orgunitScope `
+                        -IdProperties optionSet)
+                break
+            }
+            trackedEntityTypes {
+                $ret[$objName] = @($objValues |
+                    Convert-MetadataObjects `
+                        -BoolProperties allowAuditLog `
+                        -IdArrayProperties trackedEntityTypeAttributes`
+                        -OtherProperties `
+                        @{
+                            l = 'icon'
+                            e = {
+                                param ($outObj,$inputName,$outputName)
+                                if ($outObj.Contains($outputName)) {
+                                    $outObj[$outputName].Add($inputName, $value)
+                                } else {
+                                    $outObj[$outputName] = [ordered]@{"$inputName" = $value}
+                                }
+                            }
+                            n = 'style'
+                        })
+                break
+            }
+            userGroups {
+                $ret[$objName] = @($objValues |
+                    Convert-MetadataObjects `
+                        -IdArrayProperties managedGroups)
+                break
+            }
+            userRoles {
+                $ret[$objName] = @($objValues |
+                    Convert-MetadataObjects `
+                        -StringArrayProperties authorities)
+                break
+            }
+            validationRules {
+                $ret[$objName] = @($objValues |
+                    Convert-MetadataObjects `
+                        -IdProperties programStage `
+                        -IntArrayProperties organisationUnitLevels `
+                        -BoolProperties skipFormValidation `
+                        -OtherProperties `
+                        @{
+                            l = 'leftSide_slidingWindow'
+                            e = $expressionConverter
+                            n = 'leftSide'
+                        },`
+                        @{
+                            l = 'leftSide_missingValueStrategy'
+                            e = $expressionConverter
+                            n = 'leftSide'
+                        },`
+                        @{
+                            l = 'leftSide_expression'
+                            e = $expressionConverter
+                            n = 'leftSide'
+                        },`
+                        @{
+                            l = 'rightSide_slidingWindow'
+                            e = $expressionConverter
+                            n = 'rightSide'
+                        },`
+                        @{
+                            l = 'rightSide_missingValueStrategy'
+                            e = $expressionConverter
+                            n = 'rightSide'
+                        },`
+                        @{
+                            l = 'rightSide_expression'
+                            e = $expressionConverter
+                            n = 'rightSide'
+                        })
+                break
+            }
+            Default {
+                throw "Unhandled object type: $objName"
+            }
+        }
+    }
+    end {
+        return $ret
+    }
+}
+
 $inDir = Resolve-Path -LiteralPath $LiteralPath -Relative
-$inFiles = Get-ChildItem -LiteralPath $inDir -File -Filter '*.csv' |
-    Sort-Object -Property BaseName
-$metadata = [ordered]@{}
+$inputData = Get-ChildItem -LiteralPath $inDir -File -Filter '*.csv' |
+    Import-MetadataCsv
 
-foreach ($file in $inFiles) {
-    $objName = $file.BaseName
-    $objList = $file | Import-Csv
-    $final = [System.Collections.ArrayList]::new()
+if ($SortObjects) {
+    $metadata = [ordered]@{}
+    $keys = $inputData.Keys | Sort-Object
+} else {
+    $metadata = @{}
+    $keys = $inputData.Keys
+}
 
-    switch -Exact -CaseSensitive ($objName) {
-        attributes {
-            $objList |
-            ForEach-Object {
-                $inObj = $_
-                $outObj = [ordered]@{}
-                $inObj.psobject.properties | ForEach-Object {
-                    $name = $_.Name
-                    $value = $_.Value
-                    if($value -eq '') {
-                        return
-                    }
-                    switch -Exact -CaseSensitive ($name) {
-                        objectTypes {
-                            $outObj[$name] = $value.Split(' ')
-                            break
-                        }
-                        {$_ -in 'id','code','name','shortName','description','valueType'}{
-                            $outObj[$name] = $value
-                            break
-                        }
-                        Default {
-                            $outObj[$name] = [bool]::Parse($value)
-                            break
-                        }
-                    }
-                }
-                $final.Add($outObj) | Out-Null
-            }
-        }
-        dataElementGroups {
-            $objList |
-            ForEach-Object {
-                $inObj = $_
-                $outObj = [ordered]@{}
-                $inObj.psobject.properties | ForEach-Object {
-                    $name = $_.Name
-                    $value = $_.Value
-                    if($value -eq '') {
-                        return
-                    }
-                    switch -Exact -CaseSensitive ($name) {
-                        dataElements {
-                            $outObj[$name] = $value.Split(' ') |
-                                ForEach-Object  {[PSCustomObject]@{id = $_}}
-                            break
-                        }
-                        Default {
-                            $outObj[$name] = $value
-                            break
-                        }
-                    }
-                }
-                $final.Add($outObj) | Out-Null
-            }
-        }
-        dataElements {
-            $objList |
-            ForEach-Object {
-                $inObj = $_
-                $outObj = [ordered]@{}
-                $inObj.psobject.properties | ForEach-Object {
-                    $name = $_.Name
-                    $value = $_.Value
-                    if($value -eq '') {
-                        return
-                    }
-                    switch -Exact -CaseSensitive ($name) {
-                        zeroIsSignificant {
-                            $outObj[$name] = [bool]::Parse($value)
-                            break
-                        }
-                        {$_ -in 'optionSet','categoryCombo'} {
-                            $outObj[$name] = [PSCustomObject]@{id = $value}
-                            break
-                        }
-                        Default {
-                            $outObj[$name] = $value
-                            break
-                        }
-                    }
-                }
-                $final.Add($outObj) | Out-Null
-            }
-        }
-        indicatorTypes {
-            $objList |
-            ForEach-Object {
-                $inObj = $_
-                $outObj = [ordered]@{}
-                $inObj.psobject.properties | ForEach-Object {
-                    $name = $_.Name
-                    $value = $_.Value
-                    if($value -eq '') {
-                        return
-                    }
-                    switch -Exact -CaseSensitive ($name) {
-                        factor {
-                            $outObj[$name] = [int]$value
-                            break
-                        }
-                        number {
-                            $outObj[$name] = [bool]::Parse($value)
-                            break
-                        }
-                        Default {
-                            $outObj[$name] = $value
-                            break
-                        }
-                    }
-                }
-                $final.Add($outObj) | Out-Null
-            }
-        }
-        optionGroups {
-            $objList |
-            ForEach-Object {
-                $inObj = $_
-                $outObj = [ordered]@{}
-                $inObj.psobject.properties | ForEach-Object {
-                    $name = $_.Name
-                    $value = $_.Value
-                    if($value -eq '') {
-                        return
-                    }
-                    switch -Exact -CaseSensitive ($name) {
-                        options {
-                            $outObj[$name] = $value.Split(' ') |
-                                ForEach-Object  {[PSCustomObject]@{id = $_}}
-                            break
-                        }
-                        optionSet {
-                            $outObj[$name] = [PSCustomObject]@{id = $value}
-                            break
-                        }
-                        Default {
-                            $outObj[$name] = $value
-                            break
-                        }
-                    }
-                }
-                $final.Add($outObj) | Out-Null
-            }
-        }
-        optionGroupSets {
-            $objList |
-            ForEach-Object {
-                $inObj = $_
-                $outObj = [ordered]@{}
-                $inObj.psobject.properties | ForEach-Object {
-                    $name = $_.Name
-                    $value = $_.Value
-                    if($value -eq '') {
-                        return
-                    }
-                    switch -Exact -CaseSensitive ($name) {
-                        optionGroups {
-                            $outObj[$name] = $value.Split(' ') |
-                                ForEach-Object  {[PSCustomObject]@{id = $_}}
-                            break
-                        }
-                        optionSet {
-                            $outObj[$name] = [PSCustomObject]@{id = $value}
-                            break
-                        }
-                        dataDimension {
-                            $outObj[$name] = [bool]::Parse($value)
-                            break
-                        }
-                        Default {
-                            $outObj[$name] = $value
-                            break
-                        }
-                    }
-                }
-                $final.Add($outObj) | Out-Null
-            }
-        }
-        options {
-            $objList |
-            ForEach-Object {
-                $inObj = $_
-                $outObj = [ordered]@{}
-                $inObj.psobject.properties | ForEach-Object {
-                    $name = $_.Name
-                    $value = $_.Value
-                    if($value -eq '') {
-                        return
-                    }
-                    switch -Exact -CaseSensitive ($name) {
-                        optionSet {
-                            $outObj[$name] = [PSCustomObject]@{id = $value}
-                            break
-                        }
-                        sortOrder {
-                            $outObj[$name] = [int]$value
-                            break
-                        }
-                        Default {
-                            $outObj[$name] = $value
-                            break
-                        }
-                    }
-                }
-                $final.Add($outObj) | Out-Null
-            }
-        }
-        optionSets {
-            $objList |
-            ForEach-Object {
-                $inObj = $_
-                $outObj = [ordered]@{}
-                $inObj.psobject.properties | ForEach-Object {
-                    $name = $_.Name
-                    $value = $_.Value
-                    if($value -eq '') {
-                        return
-                    }
-                    $outObj[$name] = $value
-                }
-                $final.Add($outObj) | Out-Null
-            }
-        }
-        organisationUnitGroups {
-            $objList |
-            ForEach-Object {
-                $inObj = $_
-                $outObj = [ordered]@{}
-                $inObj.psobject.properties | ForEach-Object {
-                    $name = $_.Name
-                    $value = $_.Value
-                    if($value -eq '') {
-                        return
-                    }
-                    $outObj[$name] = $value
-                }
-                $final.Add($outObj) | Out-Null
-            }
-        }
-        organisationUnitGroupSets {
-            $objList |
-            ForEach-Object {
-                $inObj = $_
-                $outObj = [ordered]@{}
-                $inObj.psobject.properties | ForEach-Object {
-                    $name = $_.Name
-                    $value = $_.Value
-                    if($value -eq '') {
-                        return
-                    }
-                    switch -Exact -CaseSensitive ($name) {
-                        organisationUnitGroups {
-                            $outObj[$name] = $value.Split(' ') |
-                                ForEach-Object  {[PSCustomObject]@{id = $_}}
-                            break
-                        }
-                        {$_ -in 'dataDimension','compulsory','includeSubhierarchyInAnalytics'} {
-                            $outObj[$name] = [bool]::Parse($value)
-                            break
-                        }
-                        Default {
-                            $outObj[$name] = $value
-                            break
-                        }
-                    }
-                }
-                $final.Add($outObj) | Out-Null
-            }
-        }
-        programIndicators {
-            # Skip for now
-            $final = $null
-        }
-        programNotificationTemplates {
-            $objList |
-            ForEach-Object {
-                $inObj = $_
-                $outObj = [ordered]@{}
-                $inObj.psobject.properties | ForEach-Object {
-                    $name = $_.Name
-                    $value = $_.Value
-                    if($value -eq '') {
-                        return
-                    }
-                    switch -Exact -CaseSensitive ($name) {
-                        recipientUserGroup {
-                            $outObj[$name] = [PSCustomObject]@{id = $value}
-                            break
-                        }
-                        {$_ -in 'notifyUsersInHierarchyOnly','sendRepeatable'} {
-                            $outObj[$name] = [bool]::Parse($value)
-                            break
-                        }
-                        Default {
-                            $outObj[$name] = $value
-                            break
-                        }
-                    }
-                }
-                $final.Add($outObj) | Out-Null
-            }
-        }
-        programRuleActions {
-            $objList |
-            ForEach-Object {
-                $inObj = $_
-                $outObj = [ordered]@{}
-                $inObj.psobject.properties | ForEach-Object {
-                    $name = $_.Name
-                    $value = $_.Value
-                    if($value -eq '') {
-                        return
-                    }
-                    switch -Exact -CaseSensitive ($name) {
-                        {$_ -in 'programRule','dataElement','trackedEntityAttribute','programStageSection'} {
-                            $outObj[$name] = [PSCustomObject]@{id = $value}
-                            break
-                        }
-                        Default {
-                            $outObj[$name] = $value
-                            break
-                        }
-                    }
-                }
-                $final.Add($outObj) | Out-Null
-            }
-        }
-        programRules {
-            $objList |
-            ForEach-Object {
-                $inObj = $_
-                $outObj = [ordered]@{}
-                $inObj.psobject.properties | ForEach-Object {
-                    $name = $_.Name
-                    $value = $_.Value
-                    if($value -eq '') {
-                        return
-                    }
-                    switch -Exact -CaseSensitive ($name) {
-                        {$_ -in 'program','programStage'} {
-                            $outObj[$name] = [PSCustomObject]@{id = $value}
-                            break
-                        }
-                        priority {
-                            $outObj[$name] = [int]$value
-                            break
-                        }
-                        Default {
-                            $outObj[$name] = $value
-                            break
-                        }
-                    }
-                }
-                $final.Add($outObj) | Out-Null
-            }
-        }
-        programRuleVariables {
-            $objList |
-            ForEach-Object {
-                $inObj = $_
-                $outObj = [ordered]@{}
-                $inObj.psobject.properties | ForEach-Object {
-                    $name = $_.Name
-                    $value = $_.Value
-                    if($value -eq '') {
-                        return
-                    }
-                    switch -Exact -CaseSensitive ($name) {
-                        {$_ -in 'program','dataElement','programStage','trackedEntityAttribute'} {
-                            $outObj[$name] = [PSCustomObject]@{id = $value}
-                            break
-                        }
-                        useCodeForOptionSet {
-                            $outObj[$name] = [bool]::Parse($value)
-                            break
-                        }
-                        Default {
-                            $outObj[$name] = $value
-                            break
-                        }
-                    }
-                }
-                $final.Add($outObj) | Out-Null
-            }
-        }
-        programs {
-            $objList |
-            ForEach-Object {
-                $inObj = $_
-                $outObj = [ordered]@{}
-                $inObj.psobject.properties | ForEach-Object {
-                    $name = $_.Name
-                    $value = $_.Value
-                    if($value -eq '') {
-                        return
-                    }
-                    switch -Exact -CaseSensitive ($name) {
-                        {$_ -in 'trackedEntityType','categoryCombo'} {
-                            $outObj[$name] = [PSCustomObject]@{id = $value}
-                            break
-                        }
-                        {$_ -in 'expiryDays','completeEventsExpiryDays','openDaysAfterCoEndDate','minAttributesRequiredToSearch','maxTeiCountToReturn'} {
-                            $outObj[$name] = [int]$value
-                            break
-                        }
-                        {$_ -in 'displayIncidentDate','ignoreOverdueEvents','onlyEnrollOnce','selectEnrollmentDatesInFuture','selectIncidentDatesInFuture','skipOffline','displayFrontPageList','useFirstStageDuringRegistration'} {
-                            $outObj[$name] = [bool]::Parse($value)
-                            break
-                        }
-                        Default {
-                            $outObj[$name] = $value
-                            break
-                        }
-                    }
-                }
-                $final.Add($outObj) | Out-Null
-            }
-        }
-        programSections {
-            $objList |
-            ForEach-Object {
-                $inObj = $_
-                $outObj = [ordered]@{}
-                $inObj.psobject.properties | ForEach-Object {
-                    $name = $_.Name
-                    $value = $_.Value
-                    if($value -eq '') {
-                        return
-                    }
-                    switch -Exact -CaseSensitive ($name) {
-                        program {
-                            $outObj[$name] = [PSCustomObject]@{id = $value}
-                            break
-                        }
-                        renderType_MOBILE {
-                            if ($outObj.Contains('renderType')) {
-                                $outObj['renderType'].Add('MOBILE', [PSCustomObject]@{type = $value})
-                            } else {
-                                $outObj['renderType'] = [ordered]@{MOBILE = [PSCustomObject]@{type = $value}}
-                            }
-                            break
-                        }
-                        renderType_DESKTOP {
-                            if ($outObj.Contains('renderType')) {
-                                $outObj['renderType'].Add('DESKTOP', [PSCustomObject]@{type = $value})
-                            } else {
-                                $outObj['renderType'] = [ordered]@{DESKTOP = [PSCustomObject]@{type = $value}}
-                            }
-                            break
-                        }
-                        trackedEntityAttributes {
-                            $outObj[$name] = $value.Split(' ') |
-                                ForEach-Object  {[PSCustomObject]@{id = $_}}
-                            break
-                        }
-                        sortOrder {
-                            $outObj[$name] = [int]$value
-                            break
-                        }
-                        Default {
-                            $outObj[$name] = $value
-                            break
-                        }
-                    }
-                }
-                $final.Add($outObj) | Out-Null
-            }
-        }
-        programStageDataElements {
-            $objList |
-            ForEach-Object {
-                $inObj = $_
-                $outObj = [ordered]@{}
-                $inObj.psobject.properties | ForEach-Object {
-                    $name = $_.Name
-                    $value = $_.Value
-                    if($value -eq '') {
-                        return
-                    }
-                    switch -Exact -CaseSensitive ($name) {
-                        {$_ -in 'compulsory','allowProvidedElsewhere','displayInReports','allowFutureDate','renderOptionsAsRadio','skipSynchronization','skipAnalytics'} {
-                            $outObj[$name] = [bool]::Parse($value)
-                            break
-                        }
-                        {$_ -in 'programStage','dataElement'} {
-                            $outObj[$name] = [PSCustomObject]@{id = $value}
-                            break
-                        }
-                        sortOrder {
-                            $outObj[$name] = [int]$value
-                            break
-                        }
-                        Default {
-                            $outObj[$name] = $value
-                            break
-                        }
-                    }
-                }
-                $final.Add($outObj) | Out-Null
-            }
-        }
-        programStages {
-            $objList |
-            ForEach-Object {
-                $inObj = $_
-                $outObj = [ordered]@{}
-                $inObj.psobject.properties | ForEach-Object {
-                    $name = $_.Name
-                    $value = $_.Value
-                    if($value -eq '') {
-                        return
-                    }
-                    switch -Exact -CaseSensitive ($name) {
-                        program {
-                            $outObj[$name] = [PSCustomObject]@{id = $value}
-                            break
-                        }
-                        notificationTemplates {
-                            $outObj[$name] = $value.Split(' ') |
-                                ForEach-Object  {[PSCustomObject]@{id = $_}}
-                            break
-                        }
-                        {$_ -in 'sortOrder','minDaysFromStart'} {
-                            $outObj[$name] = [int]$value
-                            break
-                        }
-                        {$_ -in 'repeatable','autoGenerateEvent','displayGenerateEventBox','blockEntryForm','preGenerateUID','remindCompleted','generatedByEnrollmentDate','allowGenerateNextVisit','openAfterEnrollment','hideDueDate','enableUserAssignment','referral'} {
-                            $outObj[$name] = [bool]::Parse($value)
-                            break
-                        }
-                        Default {
-                            $outObj[$name] = $value
-                            break
-                        }
-                    }
-                }
-                $final.Add($outObj) | Out-Null
-            }
-        }
-        programStageSections {
-            $objList |
-            ForEach-Object {
-                $inObj = $_
-                $outObj = [ordered]@{}
-                $inObj.psobject.properties | ForEach-Object {
-                    $name = $_.Name
-                    $value = $_.Value
-                    if($value -eq '') {
-                        return
-                    }
-                    switch -Exact -CaseSensitive ($name) {
-                        programStage {
-                            $outObj[$name] = [PSCustomObject]@{id = $value}
-                            break
-                        }
-                        dataElements {
-                            $outObj[$name] = $value.Split(' ') |
-                                ForEach-Object  {[PSCustomObject]@{id = $_}}
-                            break
-                        }
-                        sortOrder {
-                            $outObj[$name] = [int]$value
-                            break
-                        }
-                        renderType_MOBILE {
-                            if ($outObj.Contains('renderType')) {
-                                $outObj['renderType'].Add('MOBILE', [PSCustomObject]@{type = $value})
-                            } else {
-                                $outObj['renderType'] = [ordered]@{MOBILE = [PSCustomObject]@{type = $value}}
-                            }
-                            break
-                        }
-                        renderType_DESKTOP {
-                            if ($outObj.Contains('renderType')) {
-                                $outObj['renderType'].Add('DESKTOP', [PSCustomObject]@{type = $value})
-                            } else {
-                                $outObj['renderType'] = [ordered]@{DESKTOP = [PSCustomObject]@{type = $value}}
-                            }
-                            break
-                        }
-                        Default {
-                            $outObj[$name] = $value
-                            break
-                        }
-                    }
-                }
-                $final.Add($outObj) | Out-Null
-            }
-        }
-        programTrackedEntityAttributes {
-            $objList |
-            ForEach-Object {
-                $inObj = $_
-                $outObj = [ordered]@{}
-                $inObj.psobject.properties | ForEach-Object {
-                    $name = $_.Name
-                    $value = $_.Value
-                    if($value -eq '') {
-                        return
-                    }
-                    switch -Exact -CaseSensitive ($name) {
-                        sortOrder {
-                            $outObj[$name] = [int]$value
-                            break
-                        }
-                        {$_ -in 'program','trackedEntityAttribute'} {
-                            $outObj[$name] = [PSCustomObject]@{id = $value}
-                            break
-                        }
-                        {$_ -in 'mandatory','displayInList','searchable','renderOptionsAsRadio'} {
-                            $outObj[$name] = [bool]::Parse($value)
-                            break
-                        }
-                        Default {
-                            $outObj[$name] = $value
-                            break
-                        }
-                    }
-                }
-                $final.Add($outObj) | Out-Null
-            }
-        }
-        trackedEntityAttributes {
-            $objList |
-            ForEach-Object {
-                $inObj = $_
-                $outObj = [ordered]@{}
-                $inObj.psobject.properties | ForEach-Object {
-                    $name = $_.Name
-                    $value = $_.Value
-                    if($value -eq '') {
-                        return
-                    }
-                    switch -Exact -CaseSensitive ($name) {
-                        optionSet {
-                            $outObj[$name] = [PSCustomObject]@{id = $value}
-                            break
-                        }
-                        {$_ -in 'unique','generated','confidential','inherit','skipSynchronization','displayOnVisitSchedule','displayInListNoProgram','orgunitScope'} {
-                            $outObj[$name] = [bool]::Parse($value)
-                            break
-                        }
-                        Default {
-                            $outObj[$name] = $value
-                            break
-                        }
-                    }
-                }
-                $final.Add($outObj) | Out-Null
-            }
-        }
-        trackedEntityTypes {
-            $objList |
-            ForEach-Object {
-                $inObj = $_
-                $outObj = [ordered]@{}
-                $inObj.psobject.properties | ForEach-Object {
-                    $name = $_.Name
-                    $value = $_.Value
-                    if($value -eq '') {
-                        return
-                    }
-                    switch -Exact -CaseSensitive ($name) {
-                        trackedEntityTypeAttributes {
-                            $outObj[$name] = $value.Split(' ') |
-                                ForEach-Object  {[PSCustomObject]@{id = $_}}
-                            break
-                        }
-                        allowAuditLog {
-                            $outObj[$name] = [bool]::Parse($value)
-                            break
-                        }
-                        icon {
-                            if ($outObj.Contains('style')) {
-                                $outObj['style'].Add('icon', $value)
-                            } else {
-                                $outObj['style'] = [ordered]@{icon = $value}
-                            }
-                            break
-                        }
-                        Default {
-                            $outObj[$name] = $value
-                            break
-                        }
-                    }
-                }
-                $final.Add($outObj) | Out-Null
-            }
-        }
-        userGroups {
-            $objList |
-            ForEach-Object {
-                $inObj = $_
-                $outObj = [ordered]@{}
-                $inObj.psobject.properties | ForEach-Object {
-                    $name = $_.Name
-                    $value = $_.Value
-                    if($value -eq '') {
-                        return
-                    }
-                    switch -Exact -CaseSensitive ($name) {
-                        managedGroups {
-                            $outObj[$name] = $value.Split(' ') |
-                                ForEach-Object  {[PSCustomObject]@{id = $_}}
-                            break
-                        }
-                        Default {
-                            $outObj[$name] = $value
-                            break
-                        }
-                    }
-                }
-                $final.Add($outObj) | Out-Null
-            }
-        }
-        userRoles {
-            $objList |
-            ForEach-Object {
-                $inObj = $_
-                $outObj = [ordered]@{}
-                $inObj.psobject.properties | ForEach-Object {
-                    $name = $_.Name
-                    $value = $_.Value
-                    if($value -eq '') {
-                        return
-                    }
-                    switch -Exact -CaseSensitive ($name) {
-                        authorities {
-                            $outObj[$name] = $value.Split(' ')
-                            break
-                        }
-                        Default {
-                            $outObj[$name] = $value
-                            break
-                        }
-                    }
-                }
-                $final.Add($outObj) | Out-Null
-            }
-        }
-        validationRules {
-            $objList |
-            ForEach-Object {
-                $inObj = $_
-                $outObj = [ordered]@{}
-                $inObj.psobject.properties | ForEach-Object {
-                    $name = $_.Name
-                    $value = $_.Value
-                    if($value -eq '') {
-                        return
-                    }
-                    switch -Exact -CaseSensitive ($name) {
-                        programStage {
-                            $outObj[$name] = [PSCustomObject]@{id = $value}
-                            break
-                        }
-                        organisationUnitLevels {
-                            $outObj[$name] = $value.Split(' ') |
-                                ForEach-Object  {[int]$_}
-                            break
-                        }
-                        leftSide_slidingWindow {
-                            if ($outObj.Contains('leftSide')) {
-                                $outObj['leftSide'].Add('slidingWindow', [bool]$value)
-                            } else {
-                                $outObj['leftSide'] = [ordered]@{slidingWindow = [bool]$value}
-                            }
-                            break
-                        }
-                        rightSide_slidingWindow {
-                            if ($outObj.Contains('rightSide')) {
-                                $outObj['rightSide'].Add('slidingWindow', [bool]$value)
-                            } else {
-                                $outObj['rightSide'] = [ordered]@{slidingWindow = [bool]$value}
-                            }
-                            break
-                        }
-                        leftSide_missingValueStrategy {
-                            if ($outObj.Contains('leftSide')) {
-                                $outObj['leftSide'].Add('missingValueStrategy', $value)
-                            } else {
-                                $outObj['leftSide'] = [ordered]@{missingValueStrategy = $value}
-                            }
-                            break
-                        }
-                        rightSide_missingValueStrategy {
-                            if ($outObj.Contains('rightSide')) {
-                                $outObj['rightSide'].Add('missingValueStrategy', $value)
-                            } else {
-                                $outObj['rightSide'] = [ordered]@{missingValueStrategy = $value}
-                            }
-                            break
-                        }
-                        leftSide_expression {
-                            if ($outObj.Contains('leftSide')) {
-                                $outObj['leftSide'].Add('expression', $value)
-                            } else {
-                                $outObj['leftSide'] = [ordered]@{expression = $value}
-                            }
-                            break
-                        }
-                        rightSide_expression {
-                            if ($outObj.Contains('rightSide')) {
-                                $outObj['rightSide'].Add('expression', $value)
-                            } else {
-                                $outObj['rightSide'] = [ordered]@{expression = $value}
-                            }
-                            break
-                        }
-                        skipFormValidation {
-                            $outObj[$name] = [bool]::Parse($value)
-                            break
-                        }
-                        Default {
-                            $outObj[$name] = $value
-                            break
-                        }
-                    }
-                }
-                $final.Add($outObj) | Out-Null
-            }
-        }
-        Default {
-            throw "Unhandled object type: $objName"
-        }
-    }
-    if ($final -ne $null) {
-        $metadata[$objName] = @($final)
-    }
+foreach ($key in $keys) {
+    $objName = $key
+    $objList = $inputData[$key]
+    $metadata[$objName] = @($objList)
 }
 
 $metadata |
