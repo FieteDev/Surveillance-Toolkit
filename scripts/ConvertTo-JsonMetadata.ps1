@@ -1,7 +1,7 @@
 [CmdletBinding(PositionalBinding, SupportsShouldProcess)]
 param(
     [Parameter(Position=0)]#, Mandatory)]
-    [string]$LiteralPath = '/home/brar/dev/NeoIPC/Surveillance-Toolkit/metadata/20250531T0640332698Z',
+    [string]$LiteralPath = '/home/brar/dev/NeoIPC/Surveillance-Toolkit/metadata/testing',
     [Parameter(Position=1)]
     [string]$OutputFile = (
         Join-Path -Path (
@@ -403,9 +403,81 @@ function Import-MetadataCsv {
     }
 }
 
+function New-UidGenerator {
+    $abc = 'abcdefghijklmnopqrstuvwxyz'
+    $letters = $abc + $abc.ToUpperInvariant()
+    $ALLOWED_CHARS = "0123456789$letters"
+    $NUMBER_OF_CODEPOINTS = $ALLOWED_CHARS.Length
+    $CODESIZE = 11
+    $existingUids = [System.Collections.Generic.HashSet[string]]::new();
+
+    {
+        do {
+            $randomChars = $script:letters[[System.Security.Cryptography.RandomNumberGenerator]::GetInt32($script:letters.Length)]
+            for ($i = 1; $i -lt $script:CODESIZE; $i++) {
+                $randomChars += $script:ALLOWED_CHARS[[System.Security.Cryptography.RandomNumberGenerator]::GetInt32($script:NUMBER_OF_CODEPOINTS)]
+            }
+        } until ($script:existingUids.Add($randomChars))
+
+        $randomChars
+    }.GetNewClosure()
+}
+
+$uidGenerator = New-UidGenerator
+
+function Test-Uid {
+    param (
+        [Parameter(Mandatory, Position = 0)]
+        [string]
+        $UID,
+        [Parameter(Position = 1)]
+        [switch]
+        $Invert
+    )
+    if ($Invert) {
+        $UID -cnotmatch '^[a-zA-Z]{1}[a-zA-Z0-9]{10}$'
+    } else {
+        $UID -cmatch '^[a-zA-Z]{1}[a-zA-Z0-9]{10}$'
+    }
+}
+
+function Repair-Metadata {
+    param ([
+        Parameter(Mandatory, Position = 0)]
+        $metadata
+    )
+
+    $fixedOptionSetIds = @{}
+    $fixedOptionIds = @{}
+
+    if ($metadata.Contains('optionSets')) {
+        foreach ($optionSet in $metadata.optionSets) {
+            if (Test-Uid $optionSet.id -Invert) {
+                $newId = Invoke-Command $uidGenerator
+                $fixedOptionSetIds[$optionSet.id] = $newId
+                $optionSet.id = $newId
+            }
+        }
+    }
+    if ($metadata.Contains('options')) {
+        foreach ($option in $metadata.options) {
+            if (Test-Uid $option.id -Invert) {
+                $newId = Invoke-Command $uidGenerator
+                $fixedOptionIds[$option.id] = $newId
+                $option.id = $newId
+            }
+            if ($fixedOptionSetIds.Contains($option.optionSet.id)) {
+                $option.optionSet.id = $fixedOptionSetIds[$option.optionSet.id]
+            }
+        }
+    }
+}
+
 $inDir = Resolve-Path -LiteralPath $LiteralPath -Relative
 $inputData = Get-ChildItem -LiteralPath $inDir -File -Filter '*.csv' |
     Import-MetadataCsv
+
+Repair-Metadata $inputData
 
 if ($SortObjects) {
     $metadata = [ordered]@{}
