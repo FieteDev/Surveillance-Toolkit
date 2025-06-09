@@ -164,7 +164,7 @@ function Import-MetadataCsv {
                 $ret[$objName] = @($objValues |
                     Convert-MetadataObjects `
                         -BoolProperties zeroIsSignificant `
-                        -IdArrayProperties optionSet,categoryCombo)
+                        -IdProperties optionSet,categoryCombo)
                 break
             }
             indicatorTypes {
@@ -423,8 +423,6 @@ function New-UidGenerator {
     }.GetNewClosure()
 }
 
-$uidGenerator = New-UidGenerator
-
 function Test-Uid {
     param (
         [Parameter(Mandatory, Position = 0)]
@@ -441,36 +439,88 @@ function Test-Uid {
     }
 }
 
+function Repair-Ids {
+    [CmdletBinding()]
+    param (
+        [Parameter(ValueFromPipeline)]
+        [object]
+        $InputObject,
+        [Parameter(Mandatory, Position = 1)]
+        [scriptblock]
+        $Generator,
+        [Parameter(Position = 2)]
+        [hashtable]
+        $FixIdProperties,
+        [Parameter(Position = 3)]
+        [hashtable]
+        $FixIdArrayProperties
+    )
+    begin {
+        $map = @{}
+    }
+    process {
+        if ($null -ne $InputObject) {
+            if (Test-Uid $InputObject.id -Invert) {
+                $oldId = $InputObject.id
+                $newId = Invoke-Command $Generator
+                Write-Debug "Replacing invalid UID '$oldId' with newly generated value '$newId'"
+                $map[$oldId] = $newId
+                $InputObject.id = $newId
+            }
+            if ($null -ne $FixIdProperties) {
+                $FixIdProperties.GetEnumerator() | ForEach-Object {
+                    $current = $InputObject[$_.Key]
+                    $oldId = $current.id
+                    if ($oldId -and $_.Value.Contains($oldId)) {
+                        $newId = $_.Value[$oldId]
+                        Write-Debug "Replacing invalid UID reference '$oldId' with new value '$newId'"
+                        $current.Id = $newId
+                    }
+                }
+            }
+            if ($null -ne $FixIdArrayProperties) {
+                $FixIdProperties.GetEnumerator() | ForEach-Object {
+                    $current = $InputObject[$_.Key]
+                    for ($i = 0; $i -lt $current.Count; $i++) {
+                        $o = $current[$i]
+                        $oldId = $o.id
+                        if ($_.Value.Contains($oldId)) {
+                            $newId = $_.Value[$oldId]
+                            Write-Debug "Replacing invalid UID reference '$oldId' with new value '$newId'"
+                            $o.id = $newId
+                        }
+                    }
+                }
+            }
+        }
+    }
+    end {
+        return $map
+    }
+}
+
 function Repair-Metadata {
     param ([
         Parameter(Mandatory, Position = 0)]
         $metadata
     )
 
-    $fixedOptionSetIds = @{}
-    $fixedOptionIds = @{}
+    $uidGenerator = New-UidGenerator
 
-    if ($metadata.Contains('optionSets')) {
-        foreach ($optionSet in $metadata.optionSets) {
-            if (Test-Uid $optionSet.id -Invert) {
-                $newId = Invoke-Command $uidGenerator
-                $fixedOptionSetIds[$optionSet.id] = $newId
-                $optionSet.id = $newId
-            }
-        }
-    }
-    if ($metadata.Contains('options')) {
-        foreach ($option in $metadata.options) {
-            if (Test-Uid $option.id -Invert) {
-                $newId = Invoke-Command $uidGenerator
-                $fixedOptionIds[$option.id] = $newId
-                $option.id = $newId
-            }
-            if ($fixedOptionSetIds.Contains($option.optionSet.id)) {
-                $option.optionSet.id = $fixedOptionSetIds[$option.optionSet.id]
-            }
-        }
-    }
+    $fixedOptionSetIds =  $metadata.optionSets |
+        Repair-Ids $uidGenerator
+
+    $fixedOptionIds =  $metadata.options |
+        Repair-Ids $uidGenerator @{optionSet = $fixedOptionSetIds}
+
+    $fixedOptionGroupIds = $metadata.optionGroups |
+        Repair-Ids $uidGenerator @{optionSet = $fixedOptionSetIds} @{options = $fixedOptionIds}
+
+    $fixedOptionGroupSetIds = $metadata.optionGroupSets |
+        Repair-Ids $uidGenerator @{optionSet = $fixedOptionSetIds} @{optionGroups = $fixedOptionGroupIds}
+
+    $fixedDataElementIds = $metadata.dataElements |
+        Repair-Ids $uidGenerator @{optionSet = $fixedOptionSetIds}# ToDo: categoryCombo
 }
 
 $inDir = Resolve-Path -LiteralPath $LiteralPath -Relative
