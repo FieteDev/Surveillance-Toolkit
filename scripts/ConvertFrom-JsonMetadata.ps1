@@ -511,6 +511,7 @@ if ($metadata.trackedEntityTypes) {
         Select-Object -Property @(
             'id'
             'name'
+            'shortName'
             'description'
             'featureType'
             'minAttributesRequiredToSearch'
@@ -520,6 +521,22 @@ if ($metadata.trackedEntityTypes) {
             @{l='trackedEntityTypeAttributes';e={$_.trackedEntityTypeAttributes.id | Sort-Object | Join-String -Separator ' '}}
             ) |
         Export-ConditionalCsv -ObjectName trackedEntityTypes
+}
+
+if ($metadata.trackedEntityTypes.trackedEntityTypeAttributes) {
+    $metadata.trackedEntityTypes.trackedEntityTypeAttributes |
+        Sort-Object -Property name |
+        Select-Object -Property @(
+            'id'
+            'externalAccess'
+            'displayInList'
+            'mandatory'
+            'searchable'
+            'favorite'
+            @{l='trackedEntityAttribute';e={$_.trackedEntityAttribute.id}}
+            @{l='trackedEntityType';e={$_.trackedEntityType.id}}
+            ) |
+        Export-ConditionalCsv -ObjectName trackedEntityTypeAttributes
 }
 
 if ($metadata.trackedEntityAttributes) {

@@ -155,6 +155,12 @@ function Import-MetadataCsv {
                         -DefaultConversion bool)
                 break
             }
+            categoryCombos {
+                $ret[$objName] = @($objValues |
+                    Convert-MetadataObjects `
+                        -BoolProperties skipTotal)
+                break
+            }
             dataElementGroups {
                 $ret[$objName] = @($objValues |
                     Convert-MetadataObjects -IdArrayProperties dataElements)
@@ -326,7 +332,7 @@ function Import-MetadataCsv {
                 $ret[$objName] = @($objValues |
                     Convert-MetadataObjects `
                         -BoolProperties allowAuditLog `
-                        -IdArrayProperties trackedEntityTypeAttributes`
+                        -IdArrayProperties trackedEntityTypeAttributes `
                         -OtherProperties `
                         @{
                             l = 'icon'
@@ -340,6 +346,13 @@ function Import-MetadataCsv {
                             }
                             n = 'style'
                         })
+                break
+            }
+            trackedEntityTypeAttributes {
+                $ret[$objName] = @($objValues |
+                    Convert-MetadataObjects `
+                        -BoolProperties externalAccess,displayInList,mandatory,searchable,favorite `
+                        -IdProperties trackedEntityAttribute,trackedEntityType)
                 break
             }
             userGroups {
@@ -453,7 +466,10 @@ function Repair-Ids {
         $FixIdProperties,
         [Parameter(Position = 3)]
         [hashtable]
-        $FixIdArrayProperties
+        $FixIdArrayProperties,
+        [Parameter(Position = 3)]
+        [hashtable]
+        $FixFullTypeArrayProperties
     )
     begin {
         $map = @{}
@@ -479,16 +495,34 @@ function Repair-Ids {
                 }
             }
             if ($null -ne $FixIdArrayProperties) {
-                $FixIdProperties.GetEnumerator() | ForEach-Object {
+                $FixIdArrayProperties.GetEnumerator() | ForEach-Object {
                     $current = $InputObject[$_.Key]
+                    $map = $_.Value
                     for ($i = 0; $i -lt $current.Count; $i++) {
                         $o = $current[$i]
                         $oldId = $o.id
-                        if ($_.Value.Contains($oldId)) {
-                            $newId = $_.Value[$oldId]
+                        if ($oldId -and $map.Contains($oldId)) {
+                            $newId = $map[$oldId]
                             Write-Debug "Replacing invalid UID reference '$oldId' with new value '$newId'"
                             $o.id = $newId
                         }
+                    }
+                }
+            }
+            if ($null -ne $FixFullTypeArrayProperties) {
+                $FixFullTypeArrayProperties.GetEnumerator() | ForEach-Object {
+                    $current = $InputObject[$_.Key]
+                    $map = $_.Value.Map
+                    $fullObjects = $_.Value.Objects
+                    for ($i = 0; $i -lt $current.Count; $i++) {
+                        $o = $current[$i]
+                        $oldId = $o.id
+                        if ($oldId -and $map.Contains($oldId)) {
+                            $newId = $map[$oldId]
+                            Write-Debug "Replacing invalid UID reference '$oldId' with new value '$newId'"
+                            $o.id = $newId
+                        }
+                        $current[$i] =  $fullObjects[$o.id]
                     }
                 }
             }
@@ -508,19 +542,99 @@ function Repair-Metadata {
     $uidGenerator = New-UidGenerator
 
     $fixedOptionSetIds =  $metadata.optionSets |
-        Repair-Ids $uidGenerator
+        Repair-Ids -Generator $uidGenerator
 
     $fixedOptionIds =  $metadata.options |
-        Repair-Ids $uidGenerator @{optionSet = $fixedOptionSetIds}
+        Repair-Ids -Generator $uidGenerator -FixIdProperties @{optionSet = $fixedOptionSetIds}
 
     $fixedOptionGroupIds = $metadata.optionGroups |
-        Repair-Ids $uidGenerator @{optionSet = $fixedOptionSetIds} @{options = $fixedOptionIds}
+        Repair-Ids -Generator $uidGenerator -FixIdProperties @{
+            optionSet = $fixedOptionSetIds
+        } -FixIdArrayProperties @{
+            options = $fixedOptionIds
+        }
 
     $fixedOptionGroupSetIds = $metadata.optionGroupSets |
-        Repair-Ids $uidGenerator @{optionSet = $fixedOptionSetIds} @{optionGroups = $fixedOptionGroupIds}
+        Repair-Ids -Generator $uidGenerator -FixIdProperties @{
+            optionSet = $fixedOptionSetIds
+        } -FixIdArrayProperties @{
+            optionGroups = $fixedOptionGroupIds
+        }
+
+    $fixedCategoryComboIds = $metadata.categoryCombos |
+        Repair-Ids -Generator $uidGenerator
 
     $fixedDataElementIds = $metadata.dataElements |
-        Repair-Ids $uidGenerator @{optionSet = $fixedOptionSetIds}# ToDo: categoryCombo
+        Repair-Ids -Generator $uidGenerator -FixIdProperties @{
+            optionSet = $fixedOptionSetIds
+            categoryCombo = $fixedCategoryComboIds
+        }
+
+    $fixedTrackedEntityAttributeIds = $metadata.trackedEntityAttributes |
+        Repair-Ids -Generator $uidGenerator -FixIdProperties @{
+            optionSet = $fixedOptionSetIds
+            categoryCombo = $fixedCategoryComboIds
+        }
+
+    $trackedEntityAttributes = @{}
+    $metadata.trackedEntityAttributes |
+        ForEach-Object {
+            $trackedEntityAttributes[$_.id] = $_
+        }
+
+
+    $fixedTrackedEntityTypeIds = $metadata.trackedEntityTypes |
+        Repair-Ids -Generator $uidGenerator
+
+    # trackedEntityTypeAttributes is a csv file to store the children inside trackedEntityTypes
+    # we have to reintegrate it there instead of making it a separate metadata object
+    $fixedTrackedEntityTypeAttributeIds = $metadata.trackedEntityTypeAttributes |
+        Repair-Ids -Generator $uidGenerator -FixIdProperties @{
+            trackedEntityAttribute = $fixedTrackedEntityAttributeIds
+            trackedEntityType = $fixedTrackedEntityTypeIds
+        }
+    $trackedEntityTypeAttributes = @{}
+    $metadata.trackedEntityTypeAttributes |
+        ForEach-Object {
+            $trackedEntityTypeAttributes[$_.id] = $_
+        }
+    $metadata.Remove('trackedEntityTypeAttributes')
+
+    $metadata.trackedEntityTypes |
+        Repair-Ids -Generator $uidGenerator -FixFullTypeArrayProperties @{
+            trackedEntityTypeAttributes = @{
+                Map = $fixedTrackedEntityTypeAttributeIds
+                Objects = $trackedEntityTypeAttributes
+            }} |
+        Out-Null
+
+    $fixedProgramIds = $metadata.programs |
+        Repair-Ids -Generator $uidGenerator -FixIdProperties @{
+            categoryCombo = $fixedCategoryComboIds
+            trackedEntityType = $fixedTrackedEntityTypeIds
+        }
+
+    $fixedProgramTrackedEntityAttributeIds = $metadata.programTrackedEntityAttributes |
+        Repair-Ids -Generator $uidGenerator -FixIdProperties @{
+            program = $fixedProgramIds
+            trackedEntityAttribute = $fixedTrackedEntityAttributeIds
+        }
+
+    # Bring the programTrackedEntityAttributes back as nested object inside programs
+    # because otherwise the import won't recognize them
+    foreach ($program in $metadata.programs) {
+        $program.programTrackedEntityAttributes = @(
+            $metadata.programTrackedEntityAttributes |
+                Where-Object { $_.program.id -eq $program.id } |
+                Sort-Object sortOrder)
+    }
+
+    $fixedProgramSectionIds = $metadata.programSections |
+        Repair-Ids -Generator $uidGenerator -FixIdProperties @{
+            program = $fixedProgramIds
+        } -FixIdArrayProperties @{
+            trackedEntityAttribute = $fixedTrackedEntityAttributeIds
+        }
 }
 
 $inDir = Resolve-Path -LiteralPath $LiteralPath -Relative
