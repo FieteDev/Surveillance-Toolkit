@@ -635,6 +635,37 @@ function Repair-Metadata {
         } -FixIdArrayProperties @{
             trackedEntityAttribute = $fixedTrackedEntityAttributeIds
         }
+
+    $fixedUserGroupsIds = $metadata.userGroups |
+        Repair-Ids -Generator $uidGenerator
+    $metadata.userGroups |
+        Repair-Ids -Generator $uidGenerator -FixIdArrayProperties @{
+            managedGroups = $fixedUserGroupsIds
+        } |
+        Out-Null
+
+    $fixedProgramNotificationTemplateIds = $metadata.programNotificationTemplates |
+        Repair-Ids -Generator $uidGenerator -FixIdProperties @{
+            recipientUserGroup = $fixedUserGroupsIds
+        }
+
+    $fixedProgramStageIds = $metadata.programStages |
+        Repair-Ids -Generator $uidGenerator -FixIdProperties @{
+            program = $fixedProgramIds
+        } -FixIdArrayProperties @{
+            notificationTemplates = $fixedProgramNotificationTemplateIds
+        }
+
+    # Bring the programStages back as nested object (ids only) inside programs
+    # because otherwise the import won't recognize them
+    foreach ($program in $metadata.programs) {
+        $program.programStages = @(
+            $metadata.programStages |
+                Where-Object { $_.program.id -eq $program.id } |
+                Sort-Object sortOrder |
+                Select-Object @{l='id';e={$_.id}})
+    }
+
 }
 
 $inDir = Resolve-Path -LiteralPath $LiteralPath -Relative
