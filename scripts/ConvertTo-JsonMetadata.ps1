@@ -666,6 +666,20 @@ function Repair-Metadata {
                 Select-Object @{l='id';e={$_.id}})
     }
 
+    $fixedProgramStageDataElementIds = $metadata.programStageDataElements |
+        Repair-Ids -Generator $uidGenerator -FixIdProperties @{
+            programStage = $fixedProgramStageIds
+            dataElement = $fixedDataElementIds
+        }
+
+    # Bring the programStageDataElements back as nested object inside programStages
+    # because otherwise the import won't recognize them
+    foreach ($programStage in $metadata.programStages) {
+        $programStage.programStageDataElements = @(
+            $metadata.programStageDataElements |
+                Where-Object { $_.programStage.id -eq $programStage.id } |
+                Sort-Object sortOrder)
+    }
 }
 
 $inDir = Resolve-Path -LiteralPath $LiteralPath -Relative
