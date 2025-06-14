@@ -458,16 +458,14 @@ function Repair-Ids {
         [Parameter(ValueFromPipeline)]
         [object]
         $InputObject,
-        [Parameter(Mandatory, Position = 1)]
         [scriptblock]
         $Generator,
-        [Parameter(Position = 2)]
+        [hashtable]
+        $FixProperties,
         [hashtable]
         $FixIdProperties,
-        [Parameter(Position = 3)]
         [hashtable]
         $FixIdArrayProperties,
-        [Parameter(Position = 3)]
         [hashtable]
         $FixFullTypeArrayProperties
     )
@@ -476,12 +474,23 @@ function Repair-Ids {
     }
     process {
         if ($null -ne $InputObject) {
-            if (Test-Uid $InputObject.id -Invert) {
+            if ($Generator -and (Test-Uid $InputObject.id -Invert)) {
                 $oldId = $InputObject.id
                 $newId = Invoke-Command $Generator
                 Write-Debug "Replacing invalid UID '$oldId' with newly generated value '$newId'"
                 $map[$oldId] = $newId
                 $InputObject.id = $newId
+            }
+            if ($null -ne $FixProperties) {
+                $FixProperties.GetEnumerator() | ForEach-Object {
+                    $key = $_.Key
+                    $current = $InputObject[$key]
+                    if ($current -and $_.Value.Contains($current)) {
+                        $new = $_.Value[$current]
+                        Write-Debug "Replacing invalid UID reference '$current' with new value '$new'"
+                        $InputObject[$key] = $new
+                    }
+                }
             }
             if ($null -ne $FixIdProperties) {
                 $FixIdProperties.GetEnumerator() | ForEach-Object {
@@ -672,13 +681,58 @@ function Repair-Metadata {
             dataElement = $fixedDataElementIds
         }
 
-    # Bring the programStageDataElements back as nested object inside programStages
-    # because otherwise the import won't recognize them
+    # Bring the programStageDataElements and programStageSections back as nested object inside
+    # programStages because otherwise the import won't recognize them
     foreach ($programStage in $metadata.programStages) {
         $programStage.programStageDataElements = @(
             $metadata.programStageDataElements |
                 Where-Object { $_.programStage.id -eq $programStage.id } |
                 Sort-Object sortOrder)
+        $programStage.programStageSections = @(
+            $metadata.programStageSections |
+                Where-Object { $_.programStage.id -eq $programStage.id } |
+                Sort-Object sortOrder |
+                Select-Object @{l='id';e={$_.id}})
+    }
+
+    $fixedProgramStageSectionIds = $metadata.programStageSections |
+        Repair-Ids -Generator $uidGenerator -FixIdProperties @{
+            programStage = $fixedProgramStageIds
+        } -FixIdArrayProperties @{
+            dataElements = $fixedDataElementIds
+        }
+
+    $fixedProgramRuleVariableIds = $metadata.programRuleVariables |
+        Repair-Ids -Generator $uidGenerator -FixIdProperties @{
+            program = $fixedProgramIds
+            programStage = $fixedProgramStageIds
+            dataElement = $fixedDataElementIds
+            trackedEntityAttribute = $fixedTrackedEntityAttributeIds
+        }
+
+    $fixedProgramRuleIds = $metadata.programRules |
+        Repair-Ids -Generator $uidGenerator -FixIdProperties @{
+            program = $fixedProgramIds
+            programStage = $fixedProgramStageIds
+        }
+
+    $fixedProgramRuleActionIds = $metadata.programRuleActions |
+        Repair-Ids -Generator $uidGenerator -FixProperties @{
+            templateUid = $fixedProgramNotificationTemplateIds
+        } -FixIdProperties @{
+            programRule = $fixedProgramRuleIds
+            programStageSection = $fixedProgramStageSectionIds
+            dataElement = $fixedDataElementIds
+            trackedEntityAttribute = $fixedTrackedEntityAttributeIds
+        }
+
+    # Bring the programRuleActions back as nested object (ids only) inside programRules
+    # because otherwise the import won't recognize them
+    foreach ($programRule in $metadata.programRules) {
+        $programRule.programRuleActions = @(
+            $metadata.programRuleActions |
+                Where-Object { $_.programRule.id -eq $programRule.id } |
+                Select-Object @{l='id';e={$_.id}})
     }
 }
 
