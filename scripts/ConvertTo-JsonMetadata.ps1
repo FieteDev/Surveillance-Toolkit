@@ -734,6 +734,36 @@ function Repair-Metadata {
                 Where-Object { $_.programRule.id -eq $programRule.id } |
                 Select-Object @{l='id';e={$_.id}})
     }
+
+    $fixedAttributeIds = $metadata.attributes |
+        Repair-Ids -Generator $uidGenerator
+
+    $fixedDataElementGroupIds = $metadata.dataElementGroups |
+        Repair-Ids -Generator $uidGenerator -FixIdArrayProperties @{
+            dataElements = $fixedDataElementIds
+        }
+
+    $fixedIndicatorTypeIds = $metadata.indicatorTypes |
+        Repair-Ids -Generator $uidGenerator
+
+    $fixedOrganisationUnitGroupIds = $metadata.organisationUnitGroups |
+        Repair-Ids -Generator $uidGenerator
+
+    $fixedOrganisationUnitGroupSetIds = $metadata.organisationUnitGroupSets |
+        Repair-Ids -Generator $uidGenerator -FixIdArrayProperties @{
+            organisationUnitGroups = $fixedOrganisationUnitGroupIds
+        }
+
+    $fixedProgramIndicatorIds = $metadata.programIndicators |
+        Repair-Ids -Generator $uidGenerator -FixIdProperties @{
+            program = $fixedProgramIds
+        }
+
+    $fixedUserRoleIds = $metadata.userRoles |
+        Repair-Ids -Generator $uidGenerator
+
+    $fixedValidationRuleIds = $metadata.validationRules |
+        Repair-Ids -Generator $uidGenerator
 }
 
 $inDir = Resolve-Path -LiteralPath $LiteralPath -Relative
